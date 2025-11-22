@@ -1,0 +1,78 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { ThumbsUp } from "lucide-react"
+
+interface OverallScoreProps {
+  score?: number
+}
+
+export default function OverallScore({ score = 78 }: OverallScoreProps) {
+  const [animatedScore, setAnimatedScore] = useState(0)
+
+  useEffect(() => {
+    let start = 0
+    const timer = setInterval(() => {
+      if (start < score) {
+        start += 1
+        setAnimatedScore(Math.min(start, score))
+      } else {
+        clearInterval(timer)
+      }
+    }, 15)
+    return () => clearInterval(timer)
+  }, [score])
+
+  const circumference = 2 * Math.PI * 70
+  const offset = circumference - (animatedScore / 100) * circumference
+
+  const getMessage = (score: number) => {
+    if (score >= 85) return "Excellent Performance!"
+    if (score >= 70) return "Great Effort!"
+    if (score >= 50) return "Room for Growth!"
+    return "Keep Practicing!"
+  }
+
+  return (
+    <div className="glass rounded-2xl border border-primary/30 p-12 text-center glow">
+      <div className="relative w-56 h-56 mx-auto mb-8">
+        <svg width="224" height="224" className="transform -rotate-90">
+          <circle cx="112" cy="112" r="70" fill="none" stroke="rgb(var(--color-border))" strokeWidth="12" />
+          <circle
+            cx="112"
+            cy="112"
+            r="70"
+            fill="none"
+            stroke="url(#gradient)"
+            strokeWidth="12"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            className="transition-all duration-1500"
+          />
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="hsl(var(--color-primary))" />
+              <stop offset="100%" stopColor="hsl(var(--color-accent))" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-6xl font-bold text-foreground">{animatedScore}</span>
+          <span className="text-xl text-muted-foreground">%</span>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <ThumbsUp className="text-accent" size={24} />
+        <h2 className="text-3xl font-bold text-foreground">{getMessage(animatedScore)}</h2>
+      </div>
+      <p className="text-muted-foreground">
+        {animatedScore >= 80
+          ? "You demonstrated strong communication and technical knowledge."
+          : "Focus on the areas below to improve your interview performance."}
+      </p>
+    </div>
+  )
+}
