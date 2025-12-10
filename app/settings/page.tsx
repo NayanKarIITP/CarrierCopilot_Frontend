@@ -60,8 +60,8 @@ export default function SettingsPage() {
 
   return (
     <div className="bg-background text-foreground min-h-screen">
-      <Navigation />
-      <Navbar/>
+      {/* <Navigation />
+      <Navbar/> */}
       <main className="md:ml-20 p-4 md:p-8">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
