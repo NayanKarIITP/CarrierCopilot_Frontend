@@ -621,12 +621,10 @@
 
 
 
-
-
 "use client";
 
 import { useState } from "react";
-import { AlertCircle, CheckCircle2, Info, Lightbulb, Zap, Database, Copy, Check } from "lucide-react";
+import { AlertCircle, CheckCircle2, Info, Lightbulb, Zap, Database, Copy, Check, ChevronRight } from "lucide-react";
 
 interface ParsedResume {
   skills?: string[];
@@ -649,9 +647,9 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
   const [copied, setCopied] = useState(false);
 
   const tabs: { id: TabType; label: string; icon: any }[] = [
-    { id: "feedback", label: "AI Analysis", icon: Zap },
-    { id: "extracted", label: "Parsed Data", icon: Database },
-    { id: "skills", label: "Skills Check", icon: Lightbulb },
+    { id: "feedback", label: "Analysis", icon: Zap },
+    { id: "extracted", label: "Data", icon: Database },
+    { id: "skills", label: "Skills", icon: Lightbulb },
   ];
 
   const handleCopy = (text: string) => {
@@ -662,7 +660,7 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center shadow-sm h-full flex flex-col items-center justify-center gap-4">
+      <div className="bg-white rounded-2xl border border-gray-200 p-8 md:p-12 text-center shadow-sm w-full flex flex-col items-center justify-center gap-4 min-h-[400px]">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
         <div className="space-y-2">
             <p className="text-gray-900 font-semibold text-lg">Analyzing Resume...</p>
@@ -682,17 +680,17 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
   const experience = Array.isArray(parsedData?.experience) ? parsedData.experience : [];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden h-full flex flex-col">
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col w-full">
       
-      {/* Header Tabs */}
-      <div className="flex border-b border-gray-100 bg-gray-50/50">
+      {/* Header Tabs - Scrollable on mobile */}
+      <div className="flex border-b border-gray-100 bg-gray-50/50 overflow-x-auto no-scrollbar">
         {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
                 <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex-1 py-4 text-sm font-semibold flex items-center justify-center gap-2 transition-all relative ${
+                    className={`flex-1 min-w-[100px] py-4 text-sm font-semibold flex items-center justify-center gap-2 transition-all relative ${
                     activeTab === tab.id
                         ? "text-indigo-600 bg-white shadow-sm ring-1 ring-black/5 z-10"
                         : "text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"
@@ -706,12 +704,13 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
         })}
       </div>
 
-      {/* Content Area */}
-      <div className="p-6 md:p-8 flex-1 overflow-y-auto max-h-[600px] custom-scrollbar">
+      {/* Content Area - Responsive Height */}
+      {/* On Mobile: Fixed height with scroll (400px). On Desktop: Auto height (grows with content) */}
+      <div className="p-5 md:p-8 flex-1 overflow-y-auto min-h-[400px] md:min-h-0 md:h-auto max-h-[80vh] custom-scrollbar">
         
         {/* === TAB 1: FEEDBACK === */}
         {activeTab === "feedback" && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
             {strengths.length === 0 && improvements.length === 0 && genericFeedback.length === 0 ? (
                <div className="text-center py-12 text-gray-400">
                  <Info size={48} className="mx-auto mb-4 opacity-30" />
@@ -721,15 +720,15 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
               <>
                 {/* Improvements (Priority) */}
                 {improvements.length > 0 && (
-                  <div className="bg-orange-50/50 rounded-xl p-5 border border-orange-100">
+                  <div className="bg-orange-50 rounded-xl p-5 border border-orange-100 shadow-sm">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-orange-800 mb-4 flex items-center gap-2">
                       <AlertCircle size={18} /> Needs Attention
                     </h3>
                     <div className="space-y-3">
                       {improvements.map((item, i) => (
-                        <div key={i} className="flex gap-3 text-sm text-gray-700">
-                          <span className="text-orange-500 font-bold">•</span>
-                          {item}
+                        <div key={i} className="flex gap-3 text-sm text-gray-700 items-start">
+                          <span className="text-orange-500 font-bold mt-0.5">•</span>
+                          <span className="leading-relaxed">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -738,15 +737,15 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
 
                 {/* Strengths */}
                 {strengths.length > 0 && (
-                  <div className="bg-green-50/50 rounded-xl p-5 border border-green-100">
+                  <div className="bg-green-50 rounded-xl p-5 border border-green-100 shadow-sm">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-green-800 mb-4 flex items-center gap-2">
                       <CheckCircle2 size={18} /> Key Strengths
                     </h3>
                     <div className="space-y-3">
                       {strengths.map((item, i) => (
-                        <div key={i} className="flex gap-3 text-sm text-gray-700">
-                          <span className="text-green-500 font-bold">✓</span>
-                          {item}
+                        <div key={i} className="flex gap-3 text-sm text-gray-700 items-start">
+                          <span className="text-green-500 font-bold mt-0.5">✓</span>
+                          <span className="leading-relaxed">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -774,16 +773,16 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
                 <>
                 {/* Experience Block */}
                 <div className="relative group">
-                    <div className="flex justify-between items-center mb-4">
-                        <h4 className="text-sm font-bold uppercase tracking-wider text-gray-400">Experience</h4>
-                    </div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Experience</h4>
                     <div className="space-y-6">
                         {experience.map((exp, i) => (
-                            <div key={i} className="relative pl-6 border-l-2 border-gray-200 hover:border-indigo-300 transition-colors">
-                                <div className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gray-200 ring-4 ring-white" />
+                            <div key={i} className="relative pl-6 border-l-2 border-gray-200">
+                                <div className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gray-300 ring-4 ring-white" />
                                 <h5 className="font-bold text-gray-900">{exp.title}</h5>
-                                <div className="text-indigo-600 text-sm font-medium mb-1">
-                                    {exp.company} <span className="text-gray-400 font-normal">• {exp.duration}</span>
+                                <div className="text-indigo-600 text-sm font-medium mb-1 flex flex-wrap gap-2">
+                                    <span>{exp.company}</span>
+                                    <span className="text-gray-300 hidden sm:inline">•</span>
+                                    <span className="text-gray-500 font-normal text-xs sm:text-sm bg-gray-100 px-2 py-0.5 rounded">{exp.duration}</span>
                                 </div>
                                 <p className="text-sm text-gray-600 leading-relaxed mt-2">{exp.description}</p>
                             </div>
@@ -795,13 +794,13 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
 
                 {/* Education Block */}
                 <div>
-                     <h4 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4">Education</h4>
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Education</h4>
+                     <div className="grid grid-cols-1 gap-4">
                         {education.map((edu, i) => (
-                            <div key={i} className="p-4 rounded-xl border border-gray-200 bg-gray-50/50">
+                            <div key={i} className="p-4 rounded-xl border border-gray-200 bg-gray-50/50 hover:bg-white transition-colors">
                                 <h5 className="font-bold text-gray-900">{edu.degree}</h5>
                                 <p className="text-sm text-gray-600">{edu.institution}</p>
-                                <p className="text-xs text-gray-400 mt-2 font-mono bg-white inline-block px-2 py-1 rounded border border-gray-200">{edu.year}</p>
+                                <p className="text-xs text-gray-400 mt-2 font-mono">{edu.year}</p>
                             </div>
                         ))}
                      </div>
@@ -826,13 +825,12 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
                             <Lightbulb className="text-blue-600 shrink-0 mt-0.5" size={18} />
                             <div>
                                 <h4 className="font-bold text-blue-900 text-sm">Skills Detected</h4>
-                                <p className="text-xs text-blue-700 mt-1">These keywords were successfully parsed from your document.</p>
+                                <p className="text-xs text-blue-700 mt-1">Found {skills.length} technical keywords.</p>
                             </div>
                         </div>
                         <button 
                             onClick={() => handleCopy(skills.join(", "))}
-                            className="text-blue-600 hover:bg-blue-100 p-1.5 rounded-lg transition-colors"
-                            title="Copy all skills"
+                            className="text-blue-600 hover:bg-blue-100 p-2 rounded-lg transition-colors"
                         >
                             {copied ? <Check size={16} /> : <Copy size={16} />}
                         </button>
@@ -840,7 +838,7 @@ export default function FeedbackTabs({ parsedData, loading = false }: FeedbackTa
 
                     <div className="flex flex-wrap gap-2">
                         {skills.map((skill, i) => (
-                            <span key={i} className="px-3 py-1.5 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg shadow-sm">
+                            <span key={i} className="px-3 py-1.5 bg-white border border-gray-200 text-gray-700 text-sm font-medium rounded-lg shadow-sm hover:border-indigo-300 transition-colors cursor-default">
                                 {skill}
                             </span>
                         ))}

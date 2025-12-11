@@ -511,12 +511,11 @@
 
 
 
-
 "use client";
 
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { useEffect, useState } from "react";
-import { Activity, Eye, Zap, Smile } from "lucide-react";
+import { Activity, Eye, Zap, Smile, TrendingUp } from "lucide-react";
 
 interface LiveFeedbackProps {
   metrics?: any;
@@ -526,12 +525,11 @@ interface LiveFeedbackProps {
 export default function LiveFeedback({ metrics, latestTranscriptAnalysis }: LiveFeedbackProps) {
   const [dataHistory, setDataHistory] = useState<any[]>([]);
 
-  // Smoothly update history graph
   useEffect(() => {
     if (metrics?.visual_confidence) {
       setDataHistory(prev => {
         const newData = [...prev, { time: '', val: metrics.visual_confidence }];
-        return newData.slice(-15); // Keep last 15 ticks
+        return newData.slice(-20); 
       });
     }
   }, [metrics]);
@@ -539,24 +537,33 @@ export default function LiveFeedback({ metrics, latestTranscriptAnalysis }: Live
   const emotion = metrics?.emotion || "Neutral";
   const confidence = metrics?.visual_confidence || 0;
   const eyeContact = metrics?.eye_contact || 0;
-  const clarity = latestTranscriptAnalysis?.clarity_score || 0;
+  
+  // Emotion Color Logic
+  const getEmotionColor = (e: string) => {
+      switch(e.toLowerCase()) {
+          case 'happy': return 'text-emerald-500 bg-emerald-50';
+          case 'stressed': return 'text-red-500 bg-red-50';
+          case 'concentrated': return 'text-blue-500 bg-blue-50';
+          default: return 'text-gray-500 bg-gray-50';
+      }
+  };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
         
         {/* 1. Main Emotion Card */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-                    <Smile size={20} />
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm transition-all">
+            <div className="flex items-center gap-4 mb-6">
+                <div className={`p-3 rounded-xl ${getEmotionColor(emotion)}`}>
+                    <Smile size={24} />
                 </div>
                 <div>
-                    <h3 className="text-sm font-bold text-gray-400 uppercase">Detected Emotion</h3>
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Detected Emotion</h3>
                     <p className="text-xl font-bold text-gray-900 capitalize">{emotion}</p>
                 </div>
             </div>
             
-            <div className="grid grid-cols-3 gap-2 mt-2">
+            <div className="grid grid-cols-3 gap-3">
                 <MiniStat label="Pitch" val={metrics?.angles?.pitch || 0} unit="°" />
                 <MiniStat label="Yaw" val={metrics?.angles?.yaw || 0} unit="°" />
                 <MiniStat label="Roll" val={metrics?.angles?.roll || 0} unit="°" />
@@ -564,19 +571,31 @@ export default function LiveFeedback({ metrics, latestTranscriptAnalysis }: Live
         </div>
 
         {/* 2. Key Metrics Bars */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-            <h3 className="flex items-center gap-2 text-sm font-bold text-gray-800">
-                <Activity size={16} className="text-blue-500"/> Performance Signals
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+            <h3 className="flex items-center gap-2 text-sm font-bold text-gray-800 uppercase tracking-wide">
+                <Zap size={16} className="text-amber-500"/> Real-time Signals
             </h3>
             
             <ProgressBar label="Visual Confidence" value={confidence} color="bg-blue-500" icon={<Zap size={14}/>} />
             <ProgressBar label="Eye Contact" value={eyeContact} color="bg-green-500" icon={<Eye size={14}/>} />
-            <ProgressBar label="Speech Clarity" value={clarity} color="bg-purple-500" icon={<Activity size={14}/>} />
+            
+            {latestTranscriptAnalysis && (
+                <div className="mt-4 pt-4 border-t border-gray-100 animate-in fade-in">
+                     <ProgressBar 
+                        label="Answer Relevance" 
+                        value={latestTranscriptAnalysis.relevance_score || 0} 
+                        color="bg-purple-500" 
+                        icon={<Activity size={14}/>} 
+                    />
+                </div>
+            )}
         </div>
 
         {/* 3. Real-time Graph */}
-        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm h-48 flex flex-col">
-            <h3 className="text-xs font-bold text-gray-400 uppercase mb-2">Confidence Trend</h3>
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-56 flex flex-col">
+            <h3 className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase mb-4">
+                 <TrendingUp size={14} /> Confidence Trend
+            </h3>
             <div className="flex-1 w-full min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={dataHistory}>
@@ -586,7 +605,7 @@ export default function LiveFeedback({ metrics, latestTranscriptAnalysis }: Live
                             stroke="#3b82f6" 
                             strokeWidth={3} 
                             dot={false}
-                            animationDuration={300}
+                            isAnimationActive={false}
                         />
                         <YAxis hide domain={[0, 100]} />
                     </LineChart>
@@ -599,23 +618,23 @@ export default function LiveFeedback({ metrics, latestTranscriptAnalysis }: Live
 
 // Helpers
 const MiniStat = ({ label, val, unit }: any) => (
-    <div className="bg-gray-50 rounded-lg p-2 text-center">
+    <div className="bg-gray-50 rounded-xl p-3 text-center border border-gray-100">
         <div className="text-lg font-bold text-gray-700">{Math.round(val)}{unit}</div>
-        <div className="text-[10px] uppercase font-bold text-gray-400">{label}</div>
+        <div className="text-[10px] uppercase font-bold text-gray-400 mt-1">{label}</div>
     </div>
 );
 
 const ProgressBar = ({ label, value, color, icon }: any) => (
     <div>
-        <div className="flex justify-between items-center text-xs mb-1.5">
-            <span className="flex items-center gap-1.5 font-medium text-gray-600">
+        <div className="flex justify-between items-center text-xs mb-2">
+            <span className="flex items-center gap-2 font-medium text-gray-600">
                 {icon} {label}
             </span>
             <span className="font-bold text-gray-900">{value}%</span>
         </div>
-        <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
             <div 
-                className={`h-full transition-all duration-700 ease-out ${color}`} 
+                className={`h-full transition-all duration-500 ease-out ${color}`} 
                 style={{ width: `${Math.min(value, 100)}%` }} 
             />
         </div>

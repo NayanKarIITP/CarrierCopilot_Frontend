@@ -1,193 +1,99 @@
-// "use client"
+"use client"
 
-// import { useEffect, useState } from "react"
-// import { Button } from "@/components/ui/button"
-// import { TrendingUp } from "lucide-react"
-
-// interface ResumeScoreProps {
-//   score?: number
-// }
-
-// export default function ResumeScore({ score = 88 }: ResumeScoreProps) {
-//   const [animatedScore, setAnimatedScore] = useState(0)
-
-//   useEffect(() => {
-//     let start = 0
-//     const timer = setInterval(() => {
-//       if (start < score) {
-//         start += 1
-//         setAnimatedScore(Math.min(start, score))
-//       } else {
-//         clearInterval(timer)
-//       }
-//     }, 15)
-//     return () => clearInterval(timer)
-//   }, [score])
-
-//   const circumference = 2 * Math.PI * 50
-//   const offset = circumference - (animatedScore / 100) * circumference
-
-//   return (
-//     <div className="glass rounded-2xl p-8 border border-border">
-//       <h3 className="text-lg font-semibold text-foreground mb-6">Resume Score</h3>
-
-//       <div className="flex flex-col items-center gap-6">
-//         <div className="relative w-40 h-40">
-//           <svg width="160" height="160" className="transform -rotate-90">
-//             <circle cx="80" cy="80" r="50" fill="none" stroke="rgb(var(--color-border))" strokeWidth="10" />
-//             <circle
-//               cx="80"
-//               cy="80"
-//               r="50"
-//               fill="none"
-//               stroke="url(#gradient)"
-//               strokeWidth="10"
-//               strokeDasharray={circumference}
-//               strokeDashoffset={offset}
-//               strokeLinecap="round"
-//               className="transition-all duration-1000"
-//             />
-//             <defs>
-//               <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-//                 <stop offset="0%" stopColor="hsl(var(--color-primary))" />
-//                 <stop offset="100%" stopColor="hsl(var(--color-accent))" />
-//               </linearGradient>
-//             </defs>
-//           </svg>
-
-//           <div className="absolute inset-0 flex flex-col items-center justify-center">
-//             <span className="text-4xl font-bold text-foreground">{animatedScore}</span>
-//             <span className="text-xs text-muted-foreground">/100</span>
-//           </div>
-//         </div>
-
-//         <Button className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-foreground">
-//           <TrendingUp size={18} className="mr-2" />
-//           Improve Your Score
-//         </Button>
-//       </div>
-//     </div>
-//   )
-// }
-
-
-
-
-
-"use client";
-
-import { useEffect, useState } from "react";
-import { TrendingUp, CheckCircle, AlertTriangle, AlertCircle } from "lucide-react";
+import { Zap, TrendingUp, AlertTriangle, CheckCircle } from "lucide-react"
 
 interface ResumeScoreProps {
-  score?: number;
+  score: number; // 0 to 100
   loading?: boolean;
 }
 
-export default function ResumeScore({ score = 0, loading = false }: ResumeScoreProps) {
-  const [animatedScore, setAnimatedScore] = useState(0);
+export default function ResumeScore({ score, loading = false }: ResumeScoreProps) {
+  
+  // Determine color based on score
+  const getColor = (s: number) => {
+    if (s >= 80) return "text-emerald-500 border-emerald-500";
+    if (s >= 50) return "text-yellow-500 border-yellow-500";
+    return "text-red-500 border-red-500";
+  };
 
-  // Animation Logic
-  useEffect(() => {
-    if (loading) return;
-    let start = 0;
-    const duration = 1000; // 1 second animation
-    const incrementTime = 15;
-    const steps = duration / incrementTime;
-    const incrementValue = score / steps;
+  const getLabel = (s: number) => {
+    if (s >= 80) return { text: "Excellent", icon: CheckCircle, color: "text-emerald-600" };
+    if (s >= 50) return { text: "Average", icon: TrendingUp, color: "text-yellow-600" };
+    return { text: "Needs Work", icon: AlertTriangle, color: "text-red-600" };
+  };
 
-    const timer = setInterval(() => {
-      start += incrementValue;
-      if (start >= score) {
-        setAnimatedScore(score);
-        clearInterval(timer);
-      } else {
-        setAnimatedScore(Math.round(start));
-      }
-    }, incrementTime);
-
-    return () => clearInterval(timer);
-  }, [score, loading]);
-
-  // Visual Logic based on Score
-  let colorClass = "text-red-500";
-  let strokeColor = "#ef4444"; // red-500
-  let statusText = "Needs Improvement";
-  let StatusIcon = AlertCircle;
-
-  if (score >= 80) {
-    colorClass = "text-green-600";
-    strokeColor = "#16a34a"; // green-600
-    statusText = "Excellent";
-    StatusIcon = CheckCircle;
-  } else if (score >= 60) {
-    colorClass = "text-orange-500";
-    strokeColor = "#f97316"; // orange-500
-    statusText = "Good Start";
-    StatusIcon = AlertTriangle;
-  }
-
-  const radius = 50;
+  const status = getLabel(score);
+  const StatusIcon = status.icon;
+  
+  // SVG Circle Calculation
+  const radius = 30;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (animatedScore / 100) * circumference;
+  const strokeDashoffset = circumference - (score / 100) * circumference;
 
   if (loading) {
-     return <div className="h-[300px] w-full bg-gray-100 animate-pulse rounded-2xl"></div>;
+      return (
+          <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm animate-pulse flex items-center gap-4">
+              <div className="h-16 w-16 bg-gray-200 rounded-full" />
+              <div className="flex-1 space-y-2">
+                  <div className="h-4 w-24 bg-gray-200 rounded" />
+                  <div className="h-3 w-full bg-gray-200 rounded" />
+              </div>
+          </div>
+      )
   }
 
   return (
-    <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm flex flex-col items-center justify-between h-full relative overflow-hidden">
+    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col md:flex-row items-center gap-6 md:gap-8 hover:shadow-md transition-shadow">
       
-      {/* Background Decor */}
-      <div className={`absolute top-0 left-0 w-full h-2 ${score >= 80 ? 'bg-green-500' : score >= 60 ? 'bg-orange-500' : 'bg-red-500'}`} />
-
-      <div className="text-center space-y-1 z-10">
-        <h3 className="text-lg font-bold text-gray-800">ATS Score</h3>
-        <p className="text-xs text-gray-500 uppercase tracking-wider">Automated Check</p>
-      </div>
-
-      {/* SVG Circle */}
-      <div className="relative w-48 h-48 my-6">
-        <svg width="192" height="192" className="transform -rotate-90">
-          {/* Background Ring */}
-          <circle
-            cx="96" cy="96" r={radius}
-            fill="none"
-            stroke="#e5e7eb"
-            strokeWidth="8"
-          />
-          {/* Progress Ring */}
-          <circle
-            cx="96" cy="96" r={radius}
-            fill="none"
-            stroke={strokeColor}
-            strokeWidth="8"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            strokeLinecap="round"
-            className="transition-all duration-1000 ease-out"
-          />
+      {/* Circular Progress */}
+      <div className="relative h-24 w-24 flex items-center justify-center">
+        {/* Background Circle */}
+        <svg className="transform -rotate-90 w-24 h-24">
+            <circle
+                className="text-gray-100"
+                strokeWidth="8"
+                stroke="currentColor"
+                fill="transparent"
+                r={radius}
+                cx="48"
+                cy="48"
+            />
+            {/* Progress Circle */}
+            <circle
+                className={`${getColor(score).split(' ')[0]} transition-all duration-1000 ease-out`}
+                strokeWidth="8"
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                stroke="currentColor"
+                fill="transparent"
+                r={radius}
+                cx="48"
+                cy="48"
+            />
         </svg>
-        
-        {/* Center Text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className={`text-5xl font-black ${colorClass}`}>
-            {animatedScore}
-          </span>
-          <span className="text-sm text-gray-400 font-medium">/ 100</span>
+        <div className="absolute flex flex-col items-center">
+            <span className="text-2xl font-bold text-gray-900">{score}</span>
         </div>
       </div>
 
-      {/* Status Badge */}
-      <div className={`flex items-center gap-2 px-4 py-2 rounded-full border ${
-          score >= 80 ? 'bg-green-50 border-green-200 text-green-700' : 
-          score >= 60 ? 'bg-orange-50 border-orange-200 text-orange-700' : 
-          'bg-red-50 border-red-200 text-red-700'
-      }`}>
-        <StatusIcon size={18} />
-        <span className="font-bold text-sm">{statusText}</span>
+      {/* Text Info */}
+      <div className="flex-1 text-center md:text-left">
+        <div className="flex items-center justify-center md:justify-start gap-2 mb-1">
+            <h3 className="text-lg font-bold text-gray-900">Resume Score</h3>
+            <span className={`px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 ${status.color}`}>
+                {status.text}
+            </span>
+        </div>
+        <p className="text-sm text-gray-500 leading-relaxed">
+            {score >= 80 
+                ? "Your resume is strong! It's well-optimized for ATS systems."
+                : score >= 50
+                ? "Good start. Focus on quantifying your achievements to boost your score."
+                : "Your resume needs significant improvements to pass automated screenings."
+            }
+        </p>
       </div>
-
     </div>
-  );
+  )
 }
