@@ -162,14 +162,14 @@
 //   // 3. Process Data for UI
 //   // If no session data, we default to 0 to prevent crashes
 //   const analysis = sessionData?.analysis || {};
-  
+
 //   // Ensure score is a number
 //   const score = analysis.clarity_score || 0;
-  
+
 //   // Arrays for feedback
 //   const strengths = Array.isArray(analysis.strengths) ? analysis.strengths : [];
 //   const improvements = Array.isArray(analysis.improvements) ? analysis.improvements : [];
-  
+
 //   // Calculate filler words
 //   const fillerCount = analysis.filler_words_count 
 //     ? Object.values(analysis.filler_words_count).reduce((a:any, b:any) => a + b, 0) 
@@ -201,7 +201,7 @@
 
 //               {/* Performance Categories Grid */}
 //               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                
+
 //                 {/* 1. Strengths (Technical Accuracy) */}
 //                 <PerformanceCategory
 //                   title="Key Strengths"
@@ -279,13 +279,14 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  Loader2, CheckCircle2, AlertCircle, Share2, Download, 
-  RotateCcw, Trophy, BrainCircuit, Mic 
+import {
+  Loader2, CheckCircle2, AlertCircle, Share2, Download,
+  RotateCcw, Trophy, BrainCircuit, Mic
 } from "lucide-react";
+import Link from "next/link";
 
 // Assuming you have a basic Navbar, otherwise remove this import
-import Navbar from "@/components/ui/navbar"; 
+import Navbar from "@/components/ui/navbar";
 
 // --- Types ---
 interface Analysis {
@@ -312,21 +313,21 @@ export default function PerformancePage() {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<SessionData | null>(null);
 
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    const params = new URLSearchParams(window.location.search);
-    
-    // ✅ FIX: Check for 'session' (used by redirect) OR 'sessionId' (used by backend)
-    const sessionId = params.get("session") || params.get("sessionId");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
 
-    if (sessionId) {
-      fetchSessionData(sessionId);
-    } else {
-      console.warn("No Session ID found in URL parameters");
-      setLoading(false);
+      // ✅ FIX: Check for 'session' (used by redirect) OR 'sessionId' (used by backend)
+      const sessionId = params.get("session") || params.get("sessionId");
+
+      if (sessionId) {
+        fetchSessionData(sessionId);
+      } else {
+        console.warn("No Session ID found in URL parameters");
+        setLoading(false);
+      }
     }
-  }
-}, []);
+  }, []);
 
   const fetchSessionData = async (id: string) => {
     try {
@@ -395,7 +396,7 @@ useEffect(() => {
       {/* <Navbar /> */}
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        
+
         {/* 1. Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
@@ -413,9 +414,9 @@ useEffect(() => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium shadow-sm">
+            {/* <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium shadow-sm">
               <Download size={16} /> Export PDF
-            </button>
+            </button> */}
             <button onClick={() => router.push('/interviewer')} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium shadow-md shadow-indigo-100">
               <RotateCcw size={16} /> Retry Session
             </button>
@@ -427,7 +428,7 @@ useEffect(() => {
           {/* Overall Score Card */}
           <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-6 relative overflow-hidden">
             <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-50 rounded-full -mr-10 -mt-10 blur-2xl opacity-50" />
-            
+
             <div className="relative z-10 w-20 h-20 flex items-center justify-center rounded-full bg-indigo-50 border-4 border-indigo-100">
               <span className="text-2xl font-bold text-indigo-600">{score}</span>
             </div>
@@ -456,26 +457,26 @@ useEffect(() => {
 
           {/* Knowledge Gap */}
           <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center">
-             <div className="flex items-start gap-4">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                  <BrainCircuit size={24} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-900">Technical Depth</p>
-                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                    You used relevant keywords for <strong>{role}</strong>, but missed some advanced concepts in system design.
-                  </p>
-                </div>
-             </div>
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                <BrainCircuit size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-gray-900">Technical Depth</p>
+                <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                  You used relevant keywords for <strong>{role}</strong>, but missed some advanced concepts in system design.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* 3. Detailed Feedback Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Main Feedback (2/3) */}
           <div className="lg:col-span-2 space-y-6">
-            
+
             {/* Strengths */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50 flex items-center gap-2">
@@ -532,7 +533,7 @@ useEffect(() => {
 
           {/* Sidebar Recommendations (1/3) */}
           <div className="space-y-6">
-            
+
             {/* AI Recommendation */}
             <div className="bg-indigo-900 text-white rounded-2xl p-6 shadow-xl shadow-indigo-200 relative overflow-hidden">
               <div className="relative z-10">
@@ -541,12 +542,14 @@ useEffect(() => {
                   Based on this session, you are showing strong potential for a <strong>{level}</strong> role. Focus on structured problem solving to reach Senior level.
                 </p>
                 <div className="mt-6">
-                  <button className="w-full py-2.5 bg-white text-indigo-900 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-indigo-50 transition-colors">
-                    View Learning Roadmap
-                  </button>
+                  <Link href="/roadmap" className="w-full block">
+                    <button className="w-full py-2.5 bg-white text-indigo-900 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-indigo-50 transition-colors">
+                      View Learning Roadmap
+                    </button>
+                  </Link>
                 </div>
               </div>
-              
+
               {/* Decorative Circle */}
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-indigo-700 rounded-full opacity-50 blur-3xl" />
             </div>

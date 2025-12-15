@@ -55,7 +55,7 @@
 //         <div className="w-1 h-6 bg-primary rounded-full"></div>
 //         <div className="text-sm font-bold text-primary uppercase tracking-wider">Current Question</div>
 //     </div>
-    
+
 //     {loading ? (
 //         <div className="h-24 flex flex-col items-center justify-center text-gray-400 gap-2">
 //             <Loader2 className="animate-spin" size={24} />
@@ -64,7 +64,7 @@
 //     ) : (
 //         <div className="text-xl font-medium text-gray-900 leading-relaxed">{question}</div>
 //     )}
-    
+
 //     {followUp && !loading && (
 //         <div className="mt-4 p-4 bg-blue-50 border border-blue-100 text-blue-800 rounded-lg text-sm flex gap-3 items-start">
 //             <div className="mt-0.5 min-w-[4px] h-[4px] rounded-full bg-blue-400"></div>
@@ -94,7 +94,7 @@
 //                     />
 //                 </div>
 //             </div>
-            
+
 //             <div className="grid grid-cols-2 gap-3 pt-2">
 //                 <div className="bg-gray-50 p-3 rounded-lg text-center">
 //                     <div className="text-xs text-gray-500 mb-1">Pace</div>
@@ -107,7 +107,7 @@
 //             </div>
 //         </div>
 //     </div>
-    
+
 //     {feedback?.message && (
 //         <div className="bg-green-50 p-4 rounded-xl border border-green-100 text-sm text-green-800 shadow-sm animate-in fade-in slide-in-from-bottom-2">
 //             <div className="flex items-center gap-2 mb-2 text-green-900 font-semibold">
@@ -224,13 +224,13 @@
 //   const startSession = async () => {
 //     if (!targetRole.trim()) return alert("Please enter a target role.");
 //     setLoading(true);
-    
+
 //     try {
 //       const token = localStorage.getItem("token");
 //       if (!token) return alert("Please log in.");
 
 //       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-      
+
 //       const res = await fetch(`${API_URL}/interview/start`, {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -275,7 +275,7 @@
 //       });
 
 //       const data = await res.json();
-      
+
 //       if (data.success) {
 //         // Show feedback
 //         setLiveFeedback({
@@ -364,7 +364,7 @@
 
 //       <main className="md:ml-20 p-4 md:p-8">
 //         <div className="max-w-7xl mx-auto">
-          
+
 //           {/* Header */}
 //           <div className="flex justify-between items-center mb-6">
 //             <h1 className="text-2xl font-bold tracking-tight">AI Mock Interview</h1>
@@ -386,7 +386,7 @@
 //           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
 //             <div className="lg:col-span-2 space-y-6">
-              
+
 //               <VideoFeed isStreaming={!isInterviewOver} onMetrics={setMetrics} />
 
 //               <QuestionDisplay 
@@ -437,7 +437,7 @@
 //                       {processing ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
 //                       {processing ? "Analyzing..." : (interviewStage === 'main' ? "Submit & Next" : "Submit & Finish")}
 //                     </button>
-                    
+
 //                     <button 
 //                       onClick={() => {
 //                           setTranscript("");
@@ -463,7 +463,7 @@
 //                         <h2 className="text-xl font-bold text-gray-900">Configure Session</h2>
 //                         <p className="text-gray-500 text-sm mt-1">Customize your AI mock interview experience</p>
 //                     </div>
-                    
+
 //                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
 //                         <div>
 //                             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Target Role</label>
@@ -809,7 +809,7 @@
 
 //   return (
 //     <div className="bg-background text-foreground min-h-screen flex">
-      
+
 //       <Navigation />
 
 //       <main className="flex-1 p-6 md:p-8 ml-[72px]">
@@ -1030,7 +1030,7 @@
 //   const [sessionId, setSessionId] = useState<string | null>(null);
 //   const [targetRole, setTargetRole] = useState("Full Stack Developer");
 //   const [experienceLevel, setExperienceLevel] = useState("Mid-Level");
-  
+
 //   // --- Interview State ---
 //   const [isInterviewActive, setIsInterviewActive] = useState(false);
 //   const [questionCount, setQuestionCount] = useState(0);
@@ -1041,7 +1041,7 @@
 //   // --- Real-Time Data State ---
 //   const [videoMetrics, setVideoMetrics] = useState<any>(null); // From VideoFeed
 //   const [transcriptAnalysis, setTranscriptAnalysis] = useState<any>(null); // From Speech Analysis
-  
+
 //   // --- Speech State ---
 //   const [transcript, setTranscript] = useState("");
 //   const [isListening, setIsListening] = useState(false);
@@ -1143,7 +1143,7 @@
 //         // Handle nested structure if needed
 //         const analysis = data.data?.analysis || data.analysis;
 //         setTranscriptAnalysis(analysis);
-        
+
 //         // Move to next stage after short delay
 //         setTimeout(() => {
 //             if (interviewStage === 'main' && currentQuestion.follow_up) {
@@ -1165,7 +1165,7 @@
 //     setLoading(true);
 //     setTranscript("");
 //     setTranscriptAnalysis(null);
-    
+
 //     try {
 //         const token = localStorage.getItem("token");
 //         const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -1196,7 +1196,7 @@
 //       {/* ✅ FIX: Wider Layout (max-w-[1800px]) */}
 //       <main className="flex-1 p-4 md:p-6 lg:p-8 ml-[72px] lg:ml-[240px] overflow-hidden">
 //         <div className="max-w-[1800px] mx-auto h-full flex flex-col gap-6">
-          
+
 //           {/* Header */}
 //           <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
 //             <div className="flex items-center gap-3">
@@ -1208,7 +1208,7 @@
 //                     <p className="text-gray-500 text-xs">Real-time emotion & technical analysis</p>
 //                 </div>
 //             </div>
-            
+
 //             {sessionId && !isInterviewActive && (
 //               <div className="flex items-center gap-3">
 //                 <div className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold border border-blue-100">
@@ -1222,14 +1222,14 @@
 //           </div>
 
 //           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
-            
+
 //             {/* LEFT: Interaction (9 Cols - Wider) */}
 //             <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-6">
-                
+
 //                 {/* 1. Video Feed - Always active */}
 //                 <div className="relative flex-1 bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-lg min-h-[400px]">
 //                     <VideoFeed isStreaming={true} onMetrics={setVideoMetrics} />
-                    
+
 //                     {/* Live Emotion Badge Overlay */}
 //                     {videoMetrics && (
 //                         <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 border border-white/10">
@@ -1246,7 +1246,7 @@
 //                                     <Settings size={28} />
 //                                 </div>
 //                                 <h2 className="text-2xl font-bold text-gray-900">Session Setup</h2>
-                                
+
 //                                 <div className="space-y-4 text-left">
 //                                     <div>
 //                                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Target Role</label>
@@ -1288,7 +1288,7 @@
 //                             loading={loading}
 //                             stage={interviewStage}
 //                         />
-                        
+
 //                         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex gap-3 items-start">
 //                             <textarea 
 //                                 className="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-lg resize-none min-h-[80px] focus:ring-2 focus:ring-blue-500 outline-none text-sm" 
@@ -1366,7 +1366,7 @@
 //   const [sessionId, setSessionId] = useState<string | null>(null);
 //   const [targetRole, setTargetRole] = useState("Full Stack Developer");
 //   const [experienceLevel, setExperienceLevel] = useState("Mid-Level");
-  
+
 //   // --- Interview State ---
 //   const [isInterviewActive, setIsInterviewActive] = useState(false);
 //   const [isInterviewOver, setIsInterviewOver] = useState(false); // ✅ Track completion
@@ -1378,7 +1378,7 @@
 //   // --- Real-Time Data State ---
 //   const [videoMetrics, setVideoMetrics] = useState<any>(null); 
 //   const [transcriptAnalysis, setTranscriptAnalysis] = useState<any>(null); 
-  
+
 //   // --- Speech State ---
 //   const [transcript, setTranscript] = useState("");
 //   const [isListening, setIsListening] = useState(false);
@@ -1488,7 +1488,7 @@
 //       const data = await res.json();
 //       if (data.success) {
 //         setTranscriptAnalysis(data.data.analysis);
-        
+
 //         setTimeout(() => {
 //             if (interviewStage === 'main' && currentQuestion.follow_up) {
 //                 setInterviewStage('followup');
@@ -1515,7 +1515,7 @@
 //     setLoading(true);
 //     setTranscript("");
 //     setTranscriptAnalysis(null);
-    
+
 //     try {
 //         const token = localStorage.getItem("token");
 //         const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -1544,7 +1544,7 @@
 //       {/* Main Content: Max Width 1800px for Ultra-Wide Feel */}
 //       <main className="flex-1 p-4 lg:p-6 ml-[72px] lg:ml-[240px] overflow-hidden h-screen flex flex-col">
 //         <div className="max-w-[1800px] w-full mx-auto flex flex-col gap-4 h-full">
-          
+
 //           {/* Header */}
 //           <div className="flex justify-between items-center bg-white px-6 py-3 rounded-xl border border-gray-200 shadow-sm shrink-0">
 //             <div className="flex items-center gap-3">
@@ -1556,7 +1556,7 @@
 //                     <p className="text-gray-400 text-xs font-medium">Real-time Analysis Active</p>
 //                 </div>
 //             </div>
-            
+
 //             {sessionId && !isInterviewOver && (
 //               <div className="flex items-center gap-4">
 //                 <div className="flex items-center gap-2 px-4 py-1.5 bg-gray-100 rounded-full border border-gray-200">
@@ -1571,14 +1571,14 @@
 //           </div>
 
 //           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full overflow-hidden pb-4">
-            
+
 //             {/* LEFT: Interaction (9 Cols) */}
 //             <div className="lg:col-span-9 flex flex-col gap-4 h-full overflow-y-auto pr-1 custom-scrollbar">
-                
+
 //                 {/* 1. Video Feed */}
 //                 <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-2xl shrink-0">
 //                     <VideoFeed isStreaming={!isInterviewOver} onMetrics={setVideoMetrics} />
-                    
+
 //                     {/* Live Badge */}
 //                     {videoMetrics && !isInterviewOver && (
 //                         <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 border border-white/10 shadow-lg">
@@ -1595,7 +1595,7 @@
 //                                     <Settings size={32} />
 //                                 </div>
 //                                 <h2 className="text-2xl font-bold text-gray-900">Session Setup</h2>
-                                
+
 //                                 <div className="space-y-4 text-left">
 //                                     <div>
 //                                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Target Role</label>
@@ -1651,7 +1651,7 @@
 //                             loading={loading}
 //                             stage={interviewStage}
 //                         />
-                        
+
 //                         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex gap-3 items-start transition-shadow hover:shadow-md">
 //                             <textarea 
 //                                 className="flex-1 p-3 bg-gray-50 border border-gray-200 rounded-lg resize-none min-h-[100px] focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all" 
@@ -1699,6 +1699,502 @@
 
 
 
+
+
+// "use client";
+
+// import { useState, useEffect, useRef } from "react";
+// import { useRouter } from "next/navigation";
+// import VideoFeed from "@/components/interviewer/video-feed";
+// import QuestionDisplay from "@/components/interviewer/question-display";
+// import LiveFeedback from "@/components/interviewer/live-feedback";
+// import { 
+//   Loader2, Mic, MicOff, Send, 
+//   BarChart3, Volume2, VolumeX, Video, Activity, X,
+//   Settings2, Play, Sparkles
+// } from "lucide-react";
+
+// // --- Types & Interfaces ---
+// interface Question {
+//   id: string;
+//   text: string;
+//   follow_up?: string;
+// }
+
+// interface AnalysisData {
+//   strengths: string[];
+//   improvements: string[];
+//   clarity_score: number;
+// }
+
+// // Global definition for Speech API
+// declare global {
+//   interface Window {
+//     SpeechRecognition: any;
+//     webkitSpeechRecognition: any;
+//   }
+// }
+
+// const MAX_QUESTIONS = 5;
+
+// export default function InterviewerPage() {
+//   const router = useRouter();
+//   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
+//   // --- Configuration State ---
+//   const [config, setConfig] = useState({
+//     sessionId: null as string | null,
+//     role: "Full Stack Developer",
+//     level: "Mid-Level"
+//   });
+
+//   // --- Interview Flow State ---
+//   const [status, setStatus] = useState<'setup' | 'active' | 'analyzing' | 'completed'>('setup');
+//   const [questionCount, setQuestionCount] = useState(0);
+//   const [currentQuestion, setCurrentQuestion] = useState<Question>({ id: "0", text: "", follow_up: "" });
+//   const [interviewStage, setInterviewStage] = useState<'main' | 'followup'>('main');
+//   const [loading, setLoading] = useState(false);
+//   const [ttsEnabled, setTtsEnabled] = useState(true);
+
+//   // 📱 Mobile State: 'interview' shows video/chat, 'analysis' shows charts
+//   const [mobileTab, setMobileTab] = useState<'interview' | 'analysis'>('interview');
+
+//   // --- Data State ---
+//   const [videoMetrics, setVideoMetrics] = useState<any>(null);
+//   const [transcriptAnalysis, setTranscriptAnalysis] = useState<AnalysisData | null>(null);
+//   const [transcript, setTranscript] = useState("");
+
+//   // --- Speech & Audio Refs ---
+//   const [isListening, setIsListening] = useState(false);
+//   const recognitionRef = useRef<any>(null);
+
+//   // ------------------------------------------------------------------
+//   // 🎤 SPEECH RECOGNITION SETUP
+//   // ------------------------------------------------------------------
+//   useEffect(() => {
+//     if (typeof window !== "undefined" && (window.SpeechRecognition || window.webkitSpeechRecognition)) {
+//       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//       const recognition = new SpeechRecognition();
+//       recognition.continuous = true;
+//       recognition.interimResults = true;
+//       recognition.lang = "en-US";
+
+//       recognition.onresult = (event: any) => {
+//         let interimTranscript = "";
+//         let finalTranscript = "";
+
+//         for (let i = event.resultIndex; i < event.results.length; i++) {
+//           const transcriptText = event.results[i][0].transcript;
+//           if (event.results[i].isFinal) {
+//             finalTranscript += transcriptText + " ";
+//           } else {
+//             interimTranscript += transcriptText;
+//           }
+//         }
+
+//         if (finalTranscript) {
+//            setTranscript((prev) => prev + finalTranscript);
+//         }
+//       };
+
+//       recognition.onerror = (event: any) => {
+//         console.error("Speech recognition error", event.error);
+//         setIsListening(false);
+//       };
+
+//       recognitionRef.current = recognition;
+//     }
+//   }, []);
+
+//   const toggleListening = () => {
+//     if (!recognitionRef.current) return alert("Browser does not support speech recognition.");
+
+//     if (isListening) {
+//       recognitionRef.current.stop();
+//       setIsListening(false);
+//     } else {
+//       recognitionRef.current.start();
+//       setIsListening(true);
+//     }
+//   };
+
+//   // ------------------------------------------------------------------
+//   // 🔊 TEXT-TO-SPEECH
+//   // ------------------------------------------------------------------
+//   useEffect(() => {
+//     if (status === 'active' && currentQuestion.text && ttsEnabled) {
+//       const textToSpeak = interviewStage === 'main' ? currentQuestion.text : currentQuestion.follow_up;
+//       if (!textToSpeak) return;
+
+//       window.speechSynthesis.cancel();
+//       const utterance = new SpeechSynthesisUtterance(textToSpeak);
+//       utterance.rate = 1.0;
+//       utterance.pitch = 1.0;
+//       window.speechSynthesis.speak(utterance);
+//     }
+//   }, [currentQuestion, interviewStage, status, ttsEnabled]);
+
+
+//   // ------------------------------------------------------------------
+//   // 🚀 API ACTIONS
+//   // ------------------------------------------------------------------
+
+//   const startSession = async () => {
+//     if (!config.role) return alert("Please enter a target role.");
+//     setLoading(true);
+
+//     try {
+//       const token = localStorage.getItem("token") || "demo-token";
+//       const res = await fetch(`${API_URL}/interview/start`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+//         body: JSON.stringify({ role: config.role, level: config.level }),
+//       });
+
+//       const data = await res.json();
+
+//       if (data.success && data.question) {
+//         setConfig(prev => ({ ...prev, sessionId: data.sessionId }));
+//         setCurrentQuestion({
+//           id: data.question._id || "1",
+//           text: data.question.text,
+//           follow_up: data.question.follow_up,
+//         });
+//         setQuestionCount(1);
+//         setStatus('active');
+//       } else {
+//         throw new Error(data.message || "Failed to start.");
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       alert("Could not connect to AI Engine. Is the backend running?");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const submitAnswer = async () => {
+//     if (!transcript.trim()) return;
+
+//     if (isListening) {
+//       recognitionRef.current.stop();
+//       setIsListening(false);
+//     }
+
+//     setStatus('analyzing'); 
+
+//     try {
+//       const token = localStorage.getItem("token") || "demo-token";
+//       const res = await fetch(`${API_URL}/interview/analyze`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+//         body: JSON.stringify({ 
+//           transcript: transcript,
+//           question: currentQuestion.text 
+//         }),
+//       });
+
+//       const data = await res.json();
+//       if (data.success) {
+//         setTranscriptAnalysis(data.data.analysis);
+//         setTimeout(() => {
+//             handleStageTransition();
+//         }, 5000);
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       setStatus('active'); 
+//     }
+//   };
+
+//   const handleStageTransition = () => {
+//       if (interviewStage === 'main' && currentQuestion.follow_up) {
+//           setInterviewStage('followup');
+//           setTranscript("");
+//           setTranscriptAnalysis(null);
+//           setStatus('active');
+//       } else {
+//           fetchNextQuestion();
+//       }
+//   };
+
+//   const fetchNextQuestion = async () => {
+//     if (questionCount >= MAX_QUESTIONS) {
+//         setStatus('completed');
+//         setTimeout(() => router.push(`/performance?session=${config.sessionId}`), 3000);
+//         return;
+//     }
+
+//     setLoading(true);
+//     setTranscript("");
+//     setTranscriptAnalysis(null);
+
+//     try {
+//         const token = localStorage.getItem("token") || "demo-token";
+//         const res = await fetch(`${API_URL}/interview/next-question`, {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+//             body: JSON.stringify({ sessionId: config.sessionId, role: config.role, level: config.level }),
+//         });
+//         const data = await res.json();
+
+//         if (data.success) {
+//             setCurrentQuestion({
+//                 id: data.question._id,
+//                 text: data.question.text,
+//                 follow_up: data.question.follow_up
+//             });
+//             setQuestionCount(prev => prev + 1);
+//             setInterviewStage('main');
+//             setStatus('active');
+//         }
+//     } catch (err) { console.error(err); }
+//     finally { setLoading(false); }
+//   };
+
+//   return (
+//     <div className="bg-gray-50 text-gray-900 min-h-screen flex flex-col font-sans overflow-hidden">
+
+//       {/* --- HEADER --- */}
+//       <header className="bg-white px-4 py-3 border-b border-gray-200 flex justify-between items-center z-30 shadow-sm shrink-0 h-16">
+//         <div className="flex items-center gap-3">
+//             <div className="p-2 bg-indigo-600 rounded-lg text-white shadow-indigo-200 shadow-lg">
+//                 <BarChart3 size={20} />
+//             </div>
+//             <div>
+//                 <h1 className="text-base font-extrabold text-gray-900 leading-tight tracking-tight">AI Interview</h1>
+//                 <div className="flex items-center gap-1.5">
+//                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+//                    <p className="text-xs text-gray-500 font-medium truncate max-w-[120px]">{config.role}</p>
+//                 </div>
+//             </div>
+//         </div>
+
+//         {status !== 'setup' && status !== 'completed' && (
+//           <div className="flex items-center gap-2 sm:gap-4">
+//              <button 
+//                 onClick={() => setTtsEnabled(!ttsEnabled)} 
+//                 className={`p-2 rounded-full transition-colors ${ttsEnabled ? 'bg-indigo-50 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}
+//                 title={ttsEnabled ? "Mute AI Voice" : "Enable AI Voice"}
+//              >
+//                {ttsEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+//              </button>
+
+//              <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">
+//                 <span>Question</span>
+//                 <span className="text-indigo-600">{questionCount}</span>
+//                 <span className="text-gray-400">/</span>
+//                 <span>{MAX_QUESTIONS}</span>
+//              </div>
+
+//              <button 
+//                 onClick={() => setStatus('completed')} 
+//                 className="text-red-500 text-xs font-bold uppercase hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
+//              >
+//                 End
+//              </button>
+//           </div>
+//         )}
+//       </header>
+
+//       {/* --- MAIN CONTENT AREA --- */}
+//       <main className="flex-1 relative overflow-hidden flex flex-col lg:flex-row h-[calc(100vh-64px)] lg:h-auto">
+
+//         {/* LEFT PANEL: Video & Interaction 
+//             Visible if: Desktop OR (Mobile AND tab is 'interview')
+//         */}
+//         <div className={`flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-6 gap-6 transition-all duration-300 ${
+//     mobileTab === 'interview' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full absolute inset-0 -z-10 lg:opacity-100 lg:static lg:translate-x-0 lg:z-auto'
+// }`}>
+
+//             {/* 1. Video Feed Container */}
+//             <div className="relative w-full aspect-video md:aspect-[16/9] lg:min-h-[400px] bg-black rounded-2xl overflow-hidden shadow-2xl border border-gray-800 shrink-0 group">
+//                 <VideoFeed isStreaming={status !== 'completed'} onMetrics={setVideoMetrics} />
+
+//                 {/* Status Indicator inside video */}
+//                 <div className="absolute top-4 right-4 z-20 flex gap-2">
+//                      {isListening && (
+//                          <div className="bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-pulse">
+//                              <Mic size={10} /> REC
+//                          </div>
+//                      )}
+//                      <div className="bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10">
+//                         {status === 'active' ? 'LIVE' : status.toUpperCase()}
+//                      </div>
+//                 </div>
+
+//                 {/* Setup Overlay */}
+//                 {/* Setup Overlay */}
+// {status === 'setup' && (
+//     <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-gray-50/90 backdrop-blur-sm lg:bg-black/60 lg:backdrop-blur-md">
+
+//         {/* Modal Card */}
+//         <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-gray-100 lg:border-none">
+
+//             {/* Modal Content */}
+//             <div className="p-6 md:p-8 space-y-6">
+//                 <div className="text-center space-y-2">
+//                     <div className="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-indigo-600 mb-2">
+//                         <Settings2 size={24} />
+//                     </div>
+//                     <h2 className="text-2xl font-bold text-gray-900">Session Setup</h2>
+//                     <p className="text-sm text-gray-500">Configure your AI interviewer settings.</p>
+//                 </div>
+
+//                 <div className="space-y-4">
+//                     <div>
+//                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Target Role</label>
+//                         <input 
+//                             className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
+//                             value={config.role} 
+//                             onChange={e => setConfig({ ...config, role: e.target.value })} 
+//                             placeholder="e.g. Product Manager"
+//                         />
+//                     </div>
+//                     <div>
+//                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Experience Level</label>
+//                         <div className="grid grid-cols-3 gap-2">
+//                             {['Junior', 'Mid-Level', 'Senior'].map((lvl) => (
+//                                 <button
+//                                     key={lvl}
+//                                     onClick={() => setConfig({ ...config, level: lvl })}
+//                                     className={`py-2.5 rounded-xl text-[10px] sm:text-xs font-bold border transition-all ${config.level === lvl ? 'bg-indigo-600 text-white border-indigo-600 shadow-md transform scale-105' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+//                                 >
+//                                     {lvl}
+//                                 </button>
+//                             ))}
+//                         </div>
+//                     </div>
+//                     <button 
+//                         onClick={startSession} 
+//                         disabled={loading} 
+//                         className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white py-3.5 rounded-xl font-bold text-sm flex justify-center items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95"
+//                     >
+//                         {loading ? <Loader2 className="animate-spin" size={18} /> : <Play size={18} fill="currentColor" />}
+//                         Start Interview
+//                     </button>
+//                 </div>
+//             </div>
+//         </div>
+//     </div>
+// )}
+//             </div>
+
+//             {/* 2. Question & Answer Area */}
+//             {(status === 'active' || status === 'analyzing') && (
+//                 <div className="flex flex-col gap-4 pb-20 lg:pb-0 h-full">
+
+//                     {/* Question Card */}
+//                     <div className="shrink-0">
+//                          <QuestionDisplay 
+//                             question={interviewStage === 'main' ? currentQuestion.text : (currentQuestion.follow_up || "Follow up question...")} 
+//                             loading={loading}
+//                             stage={interviewStage}
+//                         />
+//                     </div>
+
+//                     {/* Input Area */}
+//                     <div className="flex-1 bg-white p-2 rounded-2xl border border-gray-200 shadow-sm flex flex-col relative group focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+//                         <textarea 
+//                             className="w-full p-4 bg-transparent resize-none flex-1 text-base outline-none text-gray-700 placeholder:text-gray-300 font-medium" 
+//                             placeholder={isListening ? "Listening..." : "Type your answer or speak..."}
+//                             value={transcript}
+//                             onChange={e => setTranscript(e.target.value)}
+//                         />
+
+//                         <div className="flex justify-between items-center px-2 pb-2 mt-2">
+//                             <div className="flex items-center gap-2">
+//                                 <button 
+//                                     onClick={toggleListening} 
+//                                     className={`p-3 rounded-full transition-all duration-300 ${isListening ? 'bg-red-50 text-red-500 ring-2 ring-red-100 animate-pulse' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+//                                     title="Toggle Microphone"
+//                                 >
+//                                     {isListening ? <MicOff size={20}/> : <Mic size={20}/>}
+//                                 </button>
+//                                 {isListening && <span className="text-xs font-bold text-red-500 animate-pulse hidden sm:block">Listening...</span>}
+//                             </div>
+
+//                             <button 
+//                                 onClick={submitAnswer} 
+//                                 disabled={status === 'analyzing' || !transcript} 
+//                                 className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm font-bold flex items-center gap-2 shadow-md shadow-indigo-200 transition-all active:scale-95"
+//                             >
+//                                 {status === 'analyzing' ? <Loader2 className="animate-spin" size={18}/> : <Send size={18}/>}
+//                                 <span className="hidden sm:inline">Submit Answer</span>
+//                             </button>
+//                         </div>
+//                     </div>
+//                 </div>
+//             )}
+//         </div>
+
+//         {/* RIGHT PANEL: Analysis Sidebar 
+//             Visible if: Desktop OR (Mobile AND tab is 'analysis')
+//         */}
+//         <div className={`lg:w-[380px] xl:w-[420px] border-l border-gray-200 bg-white h-full overflow-y-auto transition-all duration-300 shadow-xl lg:shadow-none z-20 ${
+//             mobileTab === 'analysis' ? 'opacity-100 translate-x-0 absolute inset-0' : 'opacity-0 translate-x-full absolute inset-0 -z-10 lg:opacity-100 lg:static lg:translate-x-0 lg:z-auto'
+//         }`}>
+//              <div className="p-6 h-full flex flex-col">
+//                 {/* Mobile Header for Analysis View */}
+//                 <div className="flex lg:hidden justify-between items-center mb-6 pb-4 border-b border-gray-100">
+//                     <div className="flex items-center gap-2">
+//                         <Activity className="text-indigo-600" size={20} />
+//                         <h3 className="font-bold text-gray-900 text-lg">Real-time Analysis</h3>
+//                     </div>
+//                     <button onClick={() => setMobileTab('interview')} className="p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors">
+//                         <X size={20} className="text-gray-500" />
+//                     </button>
+//                 </div>
+
+//                 <div className="flex-1">
+//                     <div className="mb-6 hidden lg:block">
+//                         <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+//                             <Sparkles className="text-amber-400 fill-amber-400" size={18} /> 
+//                             AI Feedback
+//                         </h3>
+//                         <p className="text-sm text-gray-500 mt-1">Live metrics from your camera & audio.</p>
+//                     </div>
+
+//                     <LiveFeedback 
+//                         metrics={videoMetrics} 
+//                         latestTranscriptAnalysis={transcriptAnalysis} 
+//                     />
+//                 </div>
+//              </div>
+//         </div>
+
+//       </main>
+
+//       {/* --- MOBILE BOTTOM TAB BAR (Hidden on Desktop) --- */}
+//       {status !== 'setup' && (
+//         <div className="lg:hidden bg-white border-t border-gray-200 flex justify-around py-3 px-4 shrink-0 z-40 pb-safe">
+//             <button 
+//                 onClick={() => setMobileTab('interview')}
+//                 className={`flex flex-col items-center gap-1.5 p-2 rounded-xl w-full transition-all duration-300 ${mobileTab === 'interview' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-400 hover:bg-gray-50'}`}
+//             >
+//                 <Video size={22} strokeWidth={mobileTab === 'interview' ? 2.5 : 2} />
+//                 <span className="text-[10px] font-extrabold uppercase tracking-wide">Interview</span>
+//             </button>
+//             <div className="w-px bg-gray-200 h-8 self-center mx-2" />
+//             <button 
+//                 onClick={() => setMobileTab('analysis')}
+//                 className={`flex flex-col items-center gap-1.5 p-2 rounded-xl w-full transition-all duration-300 ${mobileTab === 'analysis' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-400 hover:bg-gray-50'}`}
+//             >
+//                 <Activity size={22} strokeWidth={mobileTab === 'analysis' ? 2.5 : 2} />
+//                 <span className="text-[10px] font-extrabold uppercase tracking-wide">Signals</span>
+//             </button>
+//         </div>
+//       )}
+
+//     </div>
+//   );
+// }
+
+
+
+
+
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -1706,8 +2202,8 @@ import { useRouter } from "next/navigation";
 import VideoFeed from "@/components/interviewer/video-feed";
 import QuestionDisplay from "@/components/interviewer/question-display";
 import LiveFeedback from "@/components/interviewer/live-feedback";
-import { 
-  Loader2, Mic, MicOff, Send, 
+import {
+  Loader2, Mic, MicOff, Send,
   BarChart3, Volume2, VolumeX, Video, Activity, X,
   Settings2, Play, Sparkles
 } from "lucide-react";
@@ -1733,7 +2229,7 @@ declare global {
   }
 }
 
-const MAX_QUESTIONS = 5;
+const MAX_QUESTIONS = 3;  //<<<<< Changed to 3 for quicker interviews
 
 export default function InterviewerPage() {
   const router = useRouter();
@@ -1742,7 +2238,7 @@ export default function InterviewerPage() {
   // --- Configuration State ---
   const [config, setConfig] = useState({
     sessionId: null as string | null,
-    role: "Full Stack Developer",
+    role: "Software Engineer",
     level: "Mid-Level"
   });
 
@@ -1753,7 +2249,7 @@ export default function InterviewerPage() {
   const [interviewStage, setInterviewStage] = useState<'main' | 'followup'>('main');
   const [loading, setLoading] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(true);
-  
+
   // 📱 Mobile State: 'interview' shows video/chat, 'analysis' shows charts
   const [mobileTab, setMobileTab] = useState<'interview' | 'analysis'>('interview');
 
@@ -1761,7 +2257,7 @@ export default function InterviewerPage() {
   const [videoMetrics, setVideoMetrics] = useState<any>(null);
   const [transcriptAnalysis, setTranscriptAnalysis] = useState<AnalysisData | null>(null);
   const [transcript, setTranscript] = useState("");
-  
+
   // --- Speech & Audio Refs ---
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -1789,9 +2285,9 @@ export default function InterviewerPage() {
             interimTranscript += transcriptText;
           }
         }
-        
+
         if (finalTranscript) {
-           setTranscript((prev) => prev + finalTranscript);
+          setTranscript((prev) => prev + finalTranscript);
         }
       };
 
@@ -1806,7 +2302,7 @@ export default function InterviewerPage() {
 
   const toggleListening = () => {
     if (!recognitionRef.current) return alert("Browser does not support speech recognition.");
-    
+
     if (isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
@@ -1873,22 +2369,24 @@ export default function InterviewerPage() {
 
   const submitAnswer = async () => {
     if (!transcript.trim()) return;
-    
+
     if (isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
     }
 
-    setStatus('analyzing'); 
+    setStatus('analyzing');
 
     try {
       const token = localStorage.getItem("token") || "demo-token";
+      // ✅ FIX: Sending sessionId so backend can save the report
       const res = await fetch(`${API_URL}/interview/analyze`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           transcript: transcript,
-          question: currentQuestion.text 
+          question: currentQuestion.text,
+          sessionId: config.sessionId 
         }),
       });
 
@@ -1896,291 +2394,324 @@ export default function InterviewerPage() {
       if (data.success) {
         setTranscriptAnalysis(data.data.analysis);
         setTimeout(() => {
-            handleStageTransition();
+          handleStageTransition();
         }, 5000);
       }
     } catch (err) {
       console.error(err);
-      setStatus('active'); 
+      setStatus('active');
     }
   };
 
   const handleStageTransition = () => {
-      if (interviewStage === 'main' && currentQuestion.follow_up) {
-          setInterviewStage('followup');
-          setTranscript("");
-          setTranscriptAnalysis(null);
-          setStatus('active');
-      } else {
-          fetchNextQuestion();
-      }
+    if (interviewStage === 'main' && currentQuestion.follow_up) {
+      setInterviewStage('followup');
+      setTranscript("");
+      setTranscriptAnalysis(null);
+      setStatus('active');
+    } else {
+      fetchNextQuestion();
+    }
   };
 
   const fetchNextQuestion = async () => {
     if (questionCount >= MAX_QUESTIONS) {
-        setStatus('completed');
-        setTimeout(() => router.push(`/performance?session=${config.sessionId}`), 3000);
-        return;
+      setStatus('completed');
+      setTimeout(() => router.push(`/performance?session=${config.sessionId}`), 3000);
+      return;
     }
 
     setLoading(true);
     setTranscript("");
     setTranscriptAnalysis(null);
-    
+
     try {
-        const token = localStorage.getItem("token") || "demo-token";
-        const res = await fetch(`${API_URL}/interview/next-question`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ sessionId: config.sessionId, role: config.role, level: config.level }),
+      const token = localStorage.getItem("token") || "demo-token";
+      const res = await fetch(`${API_URL}/interview/next-question`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ sessionId: config.sessionId, role: config.role, level: config.level }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setCurrentQuestion({
+          id: data.question._id,
+          text: data.question.text,
+          follow_up: data.question.follow_up
         });
-        const data = await res.json();
-        
-        if (data.success) {
-            setCurrentQuestion({
-                id: data.question._id,
-                text: data.question.text,
-                follow_up: data.question.follow_up
-            });
-            setQuestionCount(prev => prev + 1);
-            setInterviewStage('main');
-            setStatus('active');
-        }
+        setQuestionCount(prev => prev + 1);
+        setInterviewStage('main');
+        setStatus('active');
+      }
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   };
 
+  // ✅ NEW FUNCTION: Handles manual session end with Database Update
+  const handleEndSession = async () => {
+    // 1. Stop the Microphone
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+        setIsListening(false);
+      } catch (e) {
+        console.error("Error stopping recognition:", e);
+      }
+    }
+
+    setStatus('completed');
+
+    // 2. ✅ SAVE TO DATABASE BEFORE REDIRECTING
+    if (config.sessionId) {
+      try {
+        const token = localStorage.getItem("token");
+        
+        // Call your backend to finalize the session
+        // Make sure this endpoint exists in your backend!
+        await fetch(`${API_URL}/interview/end`, { 
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json", 
+            Authorization: `Bearer ${token}` 
+          },
+          body: JSON.stringify({ 
+            sessionId: config.sessionId,
+            // You might want to send the full transcript here if it wasn't saved incrementally
+            fullTranscript: transcript 
+          }),
+        });
+        
+        console.log("Session saved successfully");
+
+      } catch (error) {
+        console.error("Failed to save session:", error);
+        // Optional: alert("Failed to save interview data");
+      }
+      
+      // 3. Redirect only AFTER the await finishes
+      router.push(`/performance?session=${config.sessionId}`);
+    } else {
+      router.push('/');
+    }
+  };
+  
   return (
     <div className="bg-gray-50 text-gray-900 min-h-screen flex flex-col font-sans overflow-hidden">
-      
+
       {/* --- HEADER --- */}
       <header className="bg-white px-4 py-3 border-b border-gray-200 flex justify-between items-center z-30 shadow-sm shrink-0 h-16">
         <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-600 rounded-lg text-white shadow-indigo-200 shadow-lg">
-                <BarChart3 size={20} />
+          <div className="p-2 bg-indigo-600 rounded-lg text-white shadow-indigo-200 shadow-lg">
+            <BarChart3 size={20} />
+          </div>
+          <div>
+            <h1 className="text-base font-extrabold text-gray-900 leading-tight tracking-tight">AI Interview</h1>
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="text-xs text-gray-500 font-medium truncate max-w-[120px]">{config.role}</p>
             </div>
-            <div>
-                <h1 className="text-base font-extrabold text-gray-900 leading-tight tracking-tight">AI Interview</h1>
-                <div className="flex items-center gap-1.5">
-                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                   <p className="text-xs text-gray-500 font-medium truncate max-w-[120px]">{config.role}</p>
-                </div>
-            </div>
+          </div>
         </div>
-        
+
         {status !== 'setup' && status !== 'completed' && (
           <div className="flex items-center gap-2 sm:gap-4">
-             <button 
-                onClick={() => setTtsEnabled(!ttsEnabled)} 
-                className={`p-2 rounded-full transition-colors ${ttsEnabled ? 'bg-indigo-50 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}
-                title={ttsEnabled ? "Mute AI Voice" : "Enable AI Voice"}
-             >
-               {ttsEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-             </button>
-             
-             <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">
-                <span>Question</span>
-                <span className="text-indigo-600">{questionCount}</span>
-                <span className="text-gray-400">/</span>
-                <span>{MAX_QUESTIONS}</span>
-             </div>
+            <button
+              onClick={() => setTtsEnabled(!ttsEnabled)}
+              className={`p-2 rounded-full transition-colors ${ttsEnabled ? 'bg-indigo-50 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}
+              title={ttsEnabled ? "Mute AI Voice" : "Enable AI Voice"}
+            >
+              {ttsEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+            </button>
 
-             <button 
-                onClick={() => setStatus('completed')} 
-                className="text-red-500 text-xs font-bold uppercase hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
-             >
-                End
-             </button>
+            <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">
+              <span>Question</span>
+              <span className="text-indigo-600">{questionCount}</span>
+              <span className="text-gray-400">/</span>
+              <span>{MAX_QUESTIONS}</span>
+            </div>
+
+            {/* ✅ UPDATED END BUTTON */}
+            <button
+              onClick={handleEndSession}
+              className="text-red-500 text-xs font-bold uppercase hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              End
+            </button>
           </div>
         )}
       </header>
 
       {/* --- MAIN CONTENT AREA --- */}
       <main className="flex-1 relative overflow-hidden flex flex-col lg:flex-row h-[calc(100vh-64px)] lg:h-auto">
-        
-        {/* LEFT PANEL: Video & Interaction 
-            Visible if: Desktop OR (Mobile AND tab is 'interview')
-        */}
-        <div className={`flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-6 gap-6 transition-all duration-300 ${
-    mobileTab === 'interview' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full absolute inset-0 -z-10 lg:opacity-100 lg:static lg:translate-x-0 lg:z-auto'
-}`}>
-            
-            {/* 1. Video Feed Container */}
-            <div className="relative w-full aspect-video md:aspect-[16/9] lg:min-h-[400px] bg-black rounded-2xl overflow-hidden shadow-2xl border border-gray-800 shrink-0 group">
-                <VideoFeed isStreaming={status !== 'completed'} onMetrics={setVideoMetrics} />
-                
-                {/* Status Indicator inside video */}
-                <div className="absolute top-4 right-4 z-20 flex gap-2">
-                     {isListening && (
-                         <div className="bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-pulse">
-                             <Mic size={10} /> REC
-                         </div>
-                     )}
-                     <div className="bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10">
-                        {status === 'active' ? 'LIVE' : status.toUpperCase()}
-                     </div>
-                </div>
 
-                {/* Setup Overlay */}
-                {/* Setup Overlay */}
-{status === 'setup' && (
-    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-gray-50/90 backdrop-blur-sm lg:bg-black/60 lg:backdrop-blur-md">
-        
-        {/* Modal Card */}
-        <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-gray-100 lg:border-none">
-            
-            {/* Modal Content */}
-            <div className="p-6 md:p-8 space-y-6">
-                <div className="text-center space-y-2">
-                    <div className="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-indigo-600 mb-2">
-                        <Settings2 size={24} />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Session Setup</h2>
-                    <p className="text-sm text-gray-500">Configure your AI interviewer settings.</p>
+        {/* LEFT PANEL: Video & Interaction */}
+        <div className={`flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-6 gap-6 transition-all duration-300 ${mobileTab === 'interview' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full absolute inset-0 -z-10 lg:opacity-100 lg:static lg:translate-x-0 lg:z-auto'
+          }`}>
+
+          {/* 1. Video Feed Container */}
+          <div className="relative w-full aspect-video md:aspect-[16/9] lg:min-h-[400px] bg-black rounded-2xl overflow-hidden shadow-2xl border border-gray-800 shrink-0 group">
+            <VideoFeed isStreaming={status !== 'completed'} onMetrics={setVideoMetrics} />
+
+            <div className="absolute top-4 right-4 z-20 flex gap-2">
+              {isListening && (
+                <div className="bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 animate-pulse">
+                  <Mic size={10} /> REC
                 </div>
-                
-                <div className="space-y-4">
-                    <div>
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Target Role</label>
-                        <input 
-                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
-                            value={config.role} 
-                            onChange={e => setConfig({ ...config, role: e.target.value })} 
-                            placeholder="e.g. Product Manager"
-                        />
+              )}
+              <div className="bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full border border-white/10">
+                {status === 'active' ? 'LIVE' : status.toUpperCase()}
+              </div>
+            </div>
+
+            {status === 'setup' && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-gray-50/90 backdrop-blur-sm lg:bg-black/60 lg:backdrop-blur-md">
+                <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border border-gray-100 lg:border-none">
+                  <div className="p-6 md:p-8 space-y-6">
+                    <div className="text-center space-y-2">
+                      <div className="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto text-indigo-600 mb-2">
+                        <Settings2 size={24} />
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900">Session Setup</h2>
+                      <p className="text-sm text-gray-500">Configure your AI interviewer settings.</p>
                     </div>
-                    <div>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Target Role</label>
+                        <input
+                          className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                          value={config.role}
+                          onChange={e => setConfig({ ...config, role: e.target.value })}
+                          placeholder="e.g. Product Manager"
+                        />
+                      </div>
+                      <div>
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Experience Level</label>
                         <div className="grid grid-cols-3 gap-2">
-                            {['Junior', 'Mid-Level', 'Senior'].map((lvl) => (
-                                <button
-                                    key={lvl}
-                                    onClick={() => setConfig({ ...config, level: lvl })}
-                                    className={`py-2.5 rounded-xl text-[10px] sm:text-xs font-bold border transition-all ${config.level === lvl ? 'bg-indigo-600 text-white border-indigo-600 shadow-md transform scale-105' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
-                                >
-                                    {lvl}
-                                </button>
-                            ))}
+                          {['Junior', 'Mid-Level', 'Senior'].map((lvl) => (
+                            <button
+                              key={lvl}
+                              onClick={() => setConfig({ ...config, level: lvl })}
+                              className={`py-2.5 rounded-xl text-[10px] sm:text-xs font-bold border transition-all ${config.level === lvl ? 'bg-indigo-600 text-white border-indigo-600 shadow-md transform scale-105' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                            >
+                              {lvl}
+                            </button>
+                          ))}
                         </div>
-                    </div>
-                    <button 
-                        onClick={startSession} 
-                        disabled={loading} 
+                      </div>
+                      <button
+                        onClick={startSession}
+                        disabled={loading}
                         className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white py-3.5 rounded-xl font-bold text-sm flex justify-center items-center gap-2 shadow-lg shadow-indigo-200 transition-all active:scale-95"
-                    >
+                      >
                         {loading ? <Loader2 className="animate-spin" size={18} /> : <Play size={18} fill="currentColor" />}
                         Start Interview
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-)}
-            </div>
-
-            {/* 2. Question & Answer Area */}
-            {(status === 'active' || status === 'analyzing') && (
-                <div className="flex flex-col gap-4 pb-20 lg:pb-0 h-full">
-                    
-                    {/* Question Card */}
-                    <div className="shrink-0">
-                         <QuestionDisplay 
-                            question={interviewStage === 'main' ? currentQuestion.text : (currentQuestion.follow_up || "Follow up question...")} 
-                            loading={loading}
-                            stage={interviewStage}
-                        />
+                      </button>
                     </div>
-                    
-                    {/* Input Area */}
-                    <div className="flex-1 bg-white p-2 rounded-2xl border border-gray-200 shadow-sm flex flex-col relative group focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
-                        <textarea 
-                            className="w-full p-4 bg-transparent resize-none flex-1 text-base outline-none text-gray-700 placeholder:text-gray-300 font-medium" 
-                            placeholder={isListening ? "Listening..." : "Type your answer or speak..."}
-                            value={transcript}
-                            onChange={e => setTranscript(e.target.value)}
-                        />
-                        
-                        <div className="flex justify-between items-center px-2 pb-2 mt-2">
-                            <div className="flex items-center gap-2">
-                                <button 
-                                    onClick={toggleListening} 
-                                    className={`p-3 rounded-full transition-all duration-300 ${isListening ? 'bg-red-50 text-red-500 ring-2 ring-red-100 animate-pulse' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
-                                    title="Toggle Microphone"
-                                >
-                                    {isListening ? <MicOff size={20}/> : <Mic size={20}/>}
-                                </button>
-                                {isListening && <span className="text-xs font-bold text-red-500 animate-pulse hidden sm:block">Listening...</span>}
-                            </div>
-                            
-                            <button 
-                                onClick={submitAnswer} 
-                                disabled={status === 'analyzing' || !transcript} 
-                                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm font-bold flex items-center gap-2 shadow-md shadow-indigo-200 transition-all active:scale-95"
-                            >
-                                {status === 'analyzing' ? <Loader2 className="animate-spin" size={18}/> : <Send size={18}/>}
-                                <span className="hidden sm:inline">Submit Answer</span>
-                            </button>
-                        </div>
-                    </div>
+                  </div>
                 </div>
+              </div>
             )}
+          </div>
+
+          {/* 2. Question & Answer Area */}
+          {(status === 'active' || status === 'analyzing') && (
+            <div className="flex flex-col gap-4 pb-20 lg:pb-0 h-full">
+
+              <div className="shrink-0">
+                <QuestionDisplay
+                  question={interviewStage === 'main' ? currentQuestion.text : (currentQuestion.follow_up || "Follow up question...")}
+                  loading={loading}
+                  stage={interviewStage}
+                />
+              </div>
+
+              <div className="flex-1 bg-white p-2 rounded-2xl border border-gray-200 shadow-sm flex flex-col relative group focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+                <textarea
+                  className="w-full p-4 bg-transparent resize-none flex-1 text-base outline-none text-gray-700 placeholder:text-gray-300 font-medium"
+                  placeholder={isListening ? "Listening..." : "Type your answer or speak..."}
+                  value={transcript}
+                  onChange={e => setTranscript(e.target.value)}
+                />
+
+                <div className="flex justify-between items-center px-2 pb-2 mt-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={toggleListening}
+                      className={`p-3 rounded-full transition-all duration-300 ${isListening ? 'bg-red-50 text-red-500 ring-2 ring-red-100 animate-pulse' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                      title="Toggle Microphone"
+                    >
+                      {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+                    </button>
+                    {isListening && <span className="text-xs font-bold text-red-500 animate-pulse hidden sm:block">Listening...</span>}
+                  </div>
+
+                  <button
+                    onClick={submitAnswer}
+                    disabled={status === 'analyzing' || !transcript}
+                    className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm font-bold flex items-center gap-2 shadow-md shadow-indigo-200 transition-all active:scale-95"
+                  >
+                    {status === 'analyzing' ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
+                    <span className="hidden sm:inline">Submit Answer</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* RIGHT PANEL: Analysis Sidebar 
-            Visible if: Desktop OR (Mobile AND tab is 'analysis')
-        */}
-        <div className={`lg:w-[380px] xl:w-[420px] border-l border-gray-200 bg-white h-full overflow-y-auto transition-all duration-300 shadow-xl lg:shadow-none z-20 ${
-            mobileTab === 'analysis' ? 'opacity-100 translate-x-0 absolute inset-0' : 'opacity-0 translate-x-full absolute inset-0 -z-10 lg:opacity-100 lg:static lg:translate-x-0 lg:z-auto'
-        }`}>
-             <div className="p-6 h-full flex flex-col">
-                {/* Mobile Header for Analysis View */}
-                <div className="flex lg:hidden justify-between items-center mb-6 pb-4 border-b border-gray-100">
-                    <div className="flex items-center gap-2">
-                        <Activity className="text-indigo-600" size={20} />
-                        <h3 className="font-bold text-gray-900 text-lg">Real-time Analysis</h3>
-                    </div>
-                    <button onClick={() => setMobileTab('interview')} className="p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors">
-                        <X size={20} className="text-gray-500" />
-                    </button>
-                </div>
+        {/* RIGHT PANEL: Analysis Sidebar */}
+        <div className={`lg:w-[380px] xl:w-[420px] border-l border-gray-200 bg-white h-full overflow-y-auto transition-all duration-300 shadow-xl lg:shadow-none z-20 ${mobileTab === 'analysis' ? 'opacity-100 translate-x-0 absolute inset-0' : 'opacity-0 translate-x-full absolute inset-0 -z-10 lg:opacity-100 lg:static lg:translate-x-0 lg:z-auto'
+          }`}>
+          <div className="p-6 h-full flex flex-col">
+            <div className="flex lg:hidden justify-between items-center mb-6 pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <Activity className="text-indigo-600" size={20} />
+                <h3 className="font-bold text-gray-900 text-lg">Real-time Analysis</h3>
+              </div>
+              <button onClick={() => setMobileTab('interview')} className="p-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors">
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
 
-                <div className="flex-1">
-                    <div className="mb-6 hidden lg:block">
-                        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                            <Sparkles className="text-amber-400 fill-amber-400" size={18} /> 
-                            AI Feedback
-                        </h3>
-                        <p className="text-sm text-gray-500 mt-1">Live metrics from your camera & audio.</p>
-                    </div>
+            <div className="flex-1">
+              <div className="mb-6 hidden lg:block">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <Sparkles className="text-amber-400 fill-amber-400" size={18} />
+                  AI Feedback
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">Live metrics from your camera & audio.</p>
+              </div>
 
-                    <LiveFeedback 
-                        metrics={videoMetrics} 
-                        latestTranscriptAnalysis={transcriptAnalysis} 
-                    />
-                </div>
-             </div>
+              <LiveFeedback
+                metrics={videoMetrics}
+                latestTranscriptAnalysis={transcriptAnalysis}
+              />
+            </div>
+          </div>
         </div>
 
       </main>
 
-      {/* --- MOBILE BOTTOM TAB BAR (Hidden on Desktop) --- */}
+      {/* --- MOBILE BOTTOM TAB BAR --- */}
       {status !== 'setup' && (
         <div className="lg:hidden bg-white border-t border-gray-200 flex justify-around py-3 px-4 shrink-0 z-40 pb-safe">
-            <button 
-                onClick={() => setMobileTab('interview')}
-                className={`flex flex-col items-center gap-1.5 p-2 rounded-xl w-full transition-all duration-300 ${mobileTab === 'interview' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-400 hover:bg-gray-50'}`}
-            >
-                <Video size={22} strokeWidth={mobileTab === 'interview' ? 2.5 : 2} />
-                <span className="text-[10px] font-extrabold uppercase tracking-wide">Interview</span>
-            </button>
-            <div className="w-px bg-gray-200 h-8 self-center mx-2" />
-            <button 
-                onClick={() => setMobileTab('analysis')}
-                className={`flex flex-col items-center gap-1.5 p-2 rounded-xl w-full transition-all duration-300 ${mobileTab === 'analysis' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-400 hover:bg-gray-50'}`}
-            >
-                <Activity size={22} strokeWidth={mobileTab === 'analysis' ? 2.5 : 2} />
-                <span className="text-[10px] font-extrabold uppercase tracking-wide">Signals</span>
-            </button>
+          <button
+            onClick={() => setMobileTab('interview')}
+            className={`flex flex-col items-center gap-1.5 p-2 rounded-xl w-full transition-all duration-300 ${mobileTab === 'interview' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-400 hover:bg-gray-50'}`}
+          >
+            <Video size={22} strokeWidth={mobileTab === 'interview' ? 2.5 : 2} />
+            <span className="text-[10px] font-extrabold uppercase tracking-wide">Interview</span>
+          </button>
+          <div className="w-px bg-gray-200 h-8 self-center mx-2" />
+          <button
+            onClick={() => setMobileTab('analysis')}
+            className={`flex flex-col items-center gap-1.5 p-2 rounded-xl w-full transition-all duration-300 ${mobileTab === 'analysis' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-400 hover:bg-gray-50'}`}
+          >
+            <Activity size={22} strokeWidth={mobileTab === 'analysis' ? 2.5 : 2} />
+            <span className="text-[10px] font-extrabold uppercase tracking-wide">Signals</span>
+          </button>
         </div>
       )}
 

@@ -32,6 +32,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import Link from "next/link"; 
 
 // Auto-grade calculation
 function calculateGrade(score: number) {
@@ -95,10 +96,14 @@ export default function ResumeQualityCard({
         {reviewText}
       </p>
 
-      <button className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-card hover:bg-card/80 text-foreground transition-colors text-sm font-medium">
+      {/* ✅ WORKABLE BUTTON: Redirects to /resume */}
+      <Link 
+        href="/resume" 
+        className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-card border border-border hover:bg-muted text-foreground transition-all text-sm font-medium shadow-sm active:scale-95"
+      >
         View Full Report
         <ArrowRight size={16} />
-      </button>
+      </Link>
     </div>
   );
 }

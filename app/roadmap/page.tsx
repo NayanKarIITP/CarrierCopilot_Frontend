@@ -97,7 +97,7 @@
 // // Helper to style steps
 // const getStepStyle = (index: number, title: string = "") => {
 //     const typeLower = title.toLowerCase();
-    
+
 //     if (index === 0 || typeLower.includes("foundation") || typeLower.includes("current") || typeLower.includes("skill")) {
 //         return { icon: <CheckCircle />, color: "bg-green-100 text-green-700" };
 //     }
@@ -149,7 +149,7 @@
 //       if (data.success && data.data && data.data.length > 0) {
 //         const latest = data.data[0];
 //         setSelectedRole(latest.targetRole || "Senior Full-Stack Developer");
-        
+
 //         const steps = latest.steps || [];
 //         setRoadmapSteps(steps);
 //       }
@@ -181,7 +181,7 @@
 //         if (data.success) {
 //             let newSteps = [];
 //             const raw = data.data.roadmap;
-            
+
 //             if (Array.isArray(raw)) newSteps = raw;
 //             else if (raw?.steps) newSteps = raw.steps;
 //             else if (raw?.roadmap) newSteps = raw.roadmap;
@@ -275,7 +275,7 @@
 //             <div className="relative space-y-8 pb-12">
 //                 {roadmapSteps.map((step, i) => {
 //                     const style = getStepStyle(i, step.title || step.step_type);
-                    
+
 //                     return (
 //                     <div key={i} className="relative group">
 //                         {/* Connecting Line */}
@@ -301,7 +301,7 @@
 //                                             Step {i + 1}
 //                                         </span>
 //                                     </div>
-                                    
+
 //                                     <p className="text-sm text-gray-500 mb-6 leading-relaxed">
 //                                         {step.description || step.subtitle || "Key actions for this stage."}
 //                                     </p>
@@ -526,10 +526,10 @@
 //         if (data.success) {
 //             const resultData = data.data.roadmap || data.data; 
 //             let newSteps = [];
-            
+
 //             if (Array.isArray(resultData)) newSteps = resultData;
 //             else if (resultData?.roadmap) newSteps = resultData.roadmap;
-            
+
 //             // Set User Level based on Backend Calculation (Resume analysis)
 //             if (resultData?.level) setUserLevel(resultData.level);
 //             else if (data.data.level) setUserLevel(data.data.level);
@@ -557,7 +557,7 @@
 //     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex">
 //       <main className="flex-1 p-4 md:p-8 overflow-y-auto h-screen">
 //         <div className="max-w-7xl mx-auto w-full space-y-10">
-          
+
 //           <div className="px-2 md:px-0 border-b border-gray-200 pb-6">
 //             <h1 className="text-3xl md:text-4xl font-bold mb-2 text-gray-900">Your AI-Powered Growth Roadmap</h1>
 //             <p className="text-gray-500">Interactive, personalized career path based on your resume history.</p>
@@ -566,7 +566,7 @@
 //           <Card className="p-6 bg-white">
 //             <div className="flex justify-between items-center mb-4">
 //                 <h2 className="text-lg md:text-xl font-bold text-gray-800">Target Role</h2>
-                
+
 //                 {/* --- LEVEL BADGE --- */}
 //                 {userLevel && (
 //                     <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-2 shadow-sm animate-in fade-in zoom-in
@@ -734,384 +734,17 @@
 
 
 
-"use client";
-
-import { useState, useEffect } from "react";
-import { 
-  Loader2, CheckCircle, AlertTriangle, BookOpen, Hammer, Rocket, 
-  LayoutGrid, FileText, Mic, Map, TrendingUp, Settings, User, ExternalLink, Zap,
-  Search, Youtube, Github, Linkedin, RefreshCw
-} from "lucide-react";
-
-// --- CONSTANTS ---
-const API_URL = "http://localhost:5000/api";
-
-// --- INTERFACES ---
-interface RoadmapItem {
-  title?: string;
-  name?: string;
-  platform?: string;
-  company?: string;
-  match?: string;
-  link?: string;
-  [key: string]: any;
-}
-
-interface RoadmapStep {
-  step: number;
-  title: string;
-  subtitle?: string;
-  description?: string;
-  icon?: string;
-  color?: string;
-  textColor?: string;
-  type: "skills" | "gaps" | "courses" | "projects" | "roles" | string;
-  items: (string | RoadmapItem)[];
-}
-
-// --- SMART LINK GENERATOR ---
-const getSmartLink = (item: string | RoadmapItem, type: string) => {
-  if (typeof item !== 'string' && item.link) return item.link;
-  const text = typeof item === 'string' ? item : (item.title || item.name || "Technology");
-  const encoded = encodeURIComponent(text);
-
-  switch (type) {
-    case "skills": return `https://www.youtube.com/results?search_query=${encoded}+crash+course`;
-    case "gaps": return `https://www.youtube.com/results?search_query=learn+${encoded}+fast`;
-    case "courses": return `https://www.udemy.com/courses/search/?q=${encoded}`;
-    case "projects": return `https://github.com/search?q=${encoded}&type=repositories`;
-    case "roles": return `https://www.linkedin.com/jobs/search/?keywords=${encoded}`;
-    default: return `https://www.google.com/search?q=${encoded}`;
-  }
-};
-
-// --- INLINE COMPONENTS ---
-const Card = ({ className, children, style }: any) => (
-  <div className={`bg-white rounded-xl border border-gray-200 shadow-sm ${className}`} style={style}>{children}</div>
-);
-
-const Button = ({ children, onClick, disabled, className, variant = "primary" }: any) => {
-  const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2";
-  const variants = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm",
-    outline: "border border-gray-200 hover:bg-gray-50 text-gray-700",
-    ghost: "hover:bg-gray-100 text-gray-600"
-  };
-  return <button onClick={onClick} disabled={disabled} className={`${baseStyle} ${variants[variant as keyof typeof variants]} ${className}`}>{children}</button>;
-};
-
-// UPDATED: Input component instead of Select to allow ANY role
-const RoleInput = ({ value, onChange, placeholder }: any) => (
-  <div className="relative w-full">
-    <input 
-      type="text"
-      value={value} 
-      onChange={(e) => onChange(e.target.value)} 
-      placeholder={placeholder}
-      className="w-full bg-white border border-gray-300 text-gray-900 py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-gray-400"
-      list="role-suggestions"
-    />
-    <datalist id="role-suggestions">
-      <option value="Senior Full-Stack Developer" />
-      <option value="AI/ML Engineer" />
-      <option value="DevOps Engineer" />
-      <option value="Data Scientist" />
-      <option value="Product Manager" />
-      <option value="Blockchain Developer" />
-      <option value="Cybersecurity Analyst" />
-    </datalist>
-  </div>
-);
-
-const getStepStyle = (index: number, title: string = "") => {
-    const typeLower = title.toLowerCase();
-    if (index === 0 || typeLower.includes("foundation") || typeLower.includes("current")) return { icon: <CheckCircle />, color: "bg-green-100 text-green-700" };
-    if (typeLower.includes("gap") || typeLower.includes("acquire")) return { icon: <AlertTriangle />, color: "bg-amber-100 text-amber-700" };
-    if (typeLower.includes("project") || typeLower.includes("build")) return { icon: <Hammer />, color: "bg-purple-100 text-purple-700" };
-    if (index === 4 || typeLower.includes("goal") || typeLower.includes("role")) return { icon: <Rocket />, color: "bg-indigo-100 text-indigo-700" };
-    return { icon: <BookOpen />, color: "bg-blue-100 text-blue-700" };
-};
-
-// --- MAIN PAGE COMPONENT ---
-
-export default function RoadmapPage() {
-  const [loading, setLoading] = useState(true);
-  const [generating, setGenerating] = useState(false);
-  const [roadmapSteps, setRoadmapSteps] = useState<RoadmapStep[]>([]);
-  const [selectedRole, setSelectedRole] = useState("Senior Full-Stack Developer");
-  const [userLevel, setUserLevel] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchRoadmap();
-  }, []);
-
-  const fetchRoadmap = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) { setLoading(false); return; }
-
-      const res = await fetch(`${API_URL}/roadmap`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await res.json();
-      if (data.success && data.data && data.data.length > 0) {
-        const latest = data.data[0];
-        setSelectedRole(latest.targetRole || "Senior Full-Stack Developer");
-        const steps = latest.steps || latest.roadmap || [];
-        setRoadmapSteps(steps);
-        if (latest.level) setUserLevel(latest.level);
-      }
-    } catch (err) {
-      console.error("Roadmap fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGenerateRoadmap = async () => {
-      setGenerating(true);
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return alert("Please log in.");
-
-        const res = await fetch(`${API_URL}/roadmap/generate`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ role: selectedRole })
-        });
-
-        const data = await res.json();
-        if (data.success) {
-            const resultData = data.data.roadmap || data.data; 
-            let newSteps = [];
-            
-            // Handle different JSON structures safely
-            if (Array.isArray(resultData)) newSteps = resultData;
-            else if (resultData?.roadmap) newSteps = resultData.roadmap;
-            
-            // Update User Level from Backend Response
-            if (resultData?.level) setUserLevel(resultData.level);
-            else if (data.data.level) setUserLevel(data.data.level);
-
-            setRoadmapSteps(newSteps);
-        } else {
-            alert(data.message || "Failed.");
-        }
-      } catch (err) {
-          console.error("Error:", err);
-      } finally {
-          setGenerating(false);
-      }
-  };
-
-  if (loading) {
-      return (
-          <div className="min-h-screen flex items-center justify-center bg-gray-50">
-              <Loader2 className="animate-spin text-blue-600" size={48} />
-          </div>
-      );
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex">
-      <main className="flex-1 p-4 md:p-8 overflow-y-auto h-screen">
-        <div className="max-w-7xl mx-auto w-full space-y-10">
-          
-          <div className="px-2 md:px-0 border-b border-gray-200 pb-6">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2 text-gray-900">Your AI-Powered Growth Roadmap</h1>
-            <p className="text-gray-500">Interactive, personalized career path based on your resume history.</p>
-          </div>
-
-          <Card className="p-6 bg-white">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                <h2 className="text-lg md:text-xl font-bold text-gray-800">Target Role</h2>
-                
-                {/* --- DYNAMIC LEVEL BADGE --- */}
-                {userLevel && (
-                    <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-2 shadow-sm animate-in fade-in zoom-in
-                        ${userLevel.toLowerCase().includes('advanced') ? 'bg-purple-100 text-purple-700 border-purple-200' : 
-                          userLevel.toLowerCase().includes('intermediate') ? 'bg-blue-100 text-blue-700 border-blue-200' : 
-                          'bg-green-100 text-green-700 border-green-200'}`}>
-                        <Zap size={14} className="fill-current" /> 
-                        <span>Current Level: {userLevel}</span>
-                    </div>
-                )}
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-4 md:items-center">
-              <div className="w-full md:flex-1">
-                {/* UPDATED: Uses RoleInput to allow ANY text */}
-                <RoleInput 
-                    value={selectedRole} 
-                    onChange={setSelectedRole} 
-                    placeholder="Enter any job title (e.g. Robotics Engineer)" 
-                />
-              </div>
-              <Button onClick={handleGenerateRoadmap} disabled={generating} className="w-full md:w-auto px-8 min-w-[180px]">
-                {generating ? <><Loader2 className="animate-spin" size={18} /> Analyzing...</> : <><Rocket size={18} /> Generate Roadmap</>}
-              </Button>
-            </div>
-          </Card>
-
-          {roadmapSteps.length === 0 ? (
-             <div className="p-12 text-center border-2 border-dashed border-gray-300 rounded-xl bg-white">
-                <Map size={32} className="mx-auto mb-4 text-gray-400"/>
-                <p className="text-gray-500">No roadmap found. Enter a target role above and click Generate.</p>
-             </div>
-          ) : (
-            <div className="relative space-y-8 pb-12">
-                {roadmapSteps.map((step, i) => {
-                    const style = getStepStyle(i, step.title || step.type);
-                    return (
-                    <div key={i} className="relative group">
-                        {i !== roadmapSteps.length - 1 && (
-                            <div className="hidden md:block absolute left-8 top-16 bottom-[-2rem] w-0.5 bg-gray-200 z-0" />
-                        )}
-                        <div className="p-4 md:p-6 relative z-10">
-                            <div className={`absolute -left-2 md:-left-6 top-6 w-12 h-12 rounded-xl ${style.color} flex items-center justify-center border-4 border-gray-50 shadow-sm z-20`}>
-                                {style.icon}
-                            </div>
-                            <Card className="ml-8 md:ml-10 border-l-4 hover:shadow-lg transition-all duration-300" style={{ borderLeftColor: '#2563eb' }}>
-                                <div className="p-6">
-                                    <div className="flex justify-between mb-4">
-                                        <div>
-                                            <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
-                                            <p className="text-sm text-gray-500">{step.description || step.subtitle}</p>
-                                        </div>
-                                        <span className="text-xs font-bold uppercase text-gray-400 bg-gray-100 px-2 py-1 h-fit rounded">Step {i + 1}</span>
-                                    </div>
-
-                                    {/* --- CLICKABLE SKILLS & GAPS --- */}
-                                    {(step.type === "skills" || step.type === "gaps") && (
-                                      <div className="flex flex-wrap gap-2">
-                                        {step.items?.map((item, idx) => {
-                                          const text = typeof item === 'string' ? item : (item.name || "Skill");
-                                          const url = getSmartLink(item, step.type);
-                                          const isGap = step.type === 'gaps';
-                                          return (
-                                            <a 
-                                              key={idx} 
-                                              href={url} 
-                                              target="_blank" 
-                                              rel="noopener noreferrer"
-                                              className={`px-4 py-2 rounded-full text-sm font-medium border flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer shadow-sm ${
-                                                isGap ? 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100' : 'bg-green-50 text-green-900 border-green-200 hover:bg-green-100'
-                                              }`}
-                                              title={`Click to find ${text} tutorials`}
-                                            >
-                                              {text} 
-                                              {isGap ? <Youtube size={12} className="opacity-50"/> : <CheckCircle size={12} className="opacity-50"/>}
-                                            </a>
-                                          );
-                                        })}
-                                      </div>
-                                    )}
-
-                                    {/* --- CLICKABLE COURSES --- */}
-                                    {step.type === "courses" && (
-                                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                        {step.items?.map((item: any, idx: number) => (
-                                          <a 
-                                            key={idx}
-                                            href={getSmartLink(item, "courses")}
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-400 hover:shadow-md transition-all group/item block relative overflow-hidden"
-                                          >
-                                            <div className="absolute top-0 right-0 p-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                                                <ExternalLink size={14} className="text-blue-500" />
-                                            </div>
-                                            <h4 className="font-bold text-sm text-gray-900 mb-1 group-hover/item:text-blue-600">
-                                              {item.title}
-                                            </h4>
-                                            <div className="flex items-center gap-1 text-xs text-gray-500">
-                                              <BookOpen size={12} /> {item.platform || "Online Course"}
-                                            </div>
-                                          </a>
-                                        ))}
-                                      </div>
-                                    )}
-
-                                    {/* --- CLICKABLE PROJECTS --- */}
-                                    {step.type === "projects" && (
-                                      <div className="space-y-3">
-                                        {step.items?.map((item, idx) => (
-                                          <a 
-                                            key={idx}
-                                            href={getSmartLink(item, "projects")}
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="bg-gray-50 p-4 rounded-lg text-sm font-medium text-gray-700 border border-gray-100 flex items-center justify-between hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 transition-colors group/proj"
-                                          >
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-2 h-2 rounded-full bg-purple-500 shrink-0 group-hover/proj:scale-125 transition-transform"></div>
-                                                {typeof item === 'string' ? item : item.title}
-                                            </div>
-                                            <Github size={16} className="text-gray-400 group-hover/proj:text-purple-600"/>
-                                          </a>
-                                        ))}
-                                      </div>
-                                    )}
-
-                                    {/* --- CLICKABLE ROLES --- */}
-                                    {step.type === "roles" && (
-                                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                        {step.items?.map((item: any, idx: number) => (
-                                          <a 
-                                            key={idx}
-                                            href={getSmartLink(item, "roles")}
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-400 hover:shadow-md transition-all block group/role"
-                                          >
-                                            <div className="flex justify-between items-start">
-                                                <h4 className="font-bold text-sm text-gray-800 mb-1 group-hover/role:text-indigo-600">{item.title}</h4>
-                                                <Linkedin size={14} className="text-gray-300 group-hover/role:text-indigo-500"/>
-                                            </div>
-                                            <p className="text-xs text-gray-500 mt-1 flex justify-between items-center">
-                                              <span>{item.company || "Top Tech Co."}</span>
-                                              <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded-full font-bold text-[10px] border border-green-100">
-                                                {item.match} match
-                                              </span>
-                                            </p>
-                                          </a>
-                                        ))}
-                                      </div>
-                                    )}
-                                </div>
-                            </Card>
-                        </div>
-                    </div>
-                    );
-                })}
-            </div>
-          )}
-        </div>
-      </main>
-    </div>
-  );
-}
-
-
-
-
-
-
-
-
-
 // "use client";
 
 // import { useState, useEffect } from "react";
 // import { 
 //   Loader2, CheckCircle, AlertTriangle, BookOpen, Hammer, Rocket, 
-//   Map, Zap, ExternalLink, Github, Linkedin, Youtube 
+//   LayoutGrid, FileText, Mic, Map, TrendingUp, Settings, User, ExternalLink, Zap,
+//   Search, Youtube, Github, Linkedin, RefreshCw
 // } from "lucide-react";
 
 // // --- CONSTANTS ---
-// // ✅ FIX: Use environment variable with fallback
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+// const API_URL = "http://localhost:5000/api";
 
 // // --- INTERFACES ---
 // interface RoadmapItem {
@@ -1131,6 +764,7 @@ export default function RoadmapPage() {
 //   description?: string;
 //   icon?: string;
 //   color?: string;
+//   textColor?: string;
 //   type: "skills" | "gaps" | "courses" | "projects" | "roles" | string;
 //   items: (string | RoadmapItem)[];
 // }
@@ -1156,16 +790,17 @@ export default function RoadmapPage() {
 //   <div className={`bg-white rounded-xl border border-gray-200 shadow-sm ${className}`} style={style}>{children}</div>
 // );
 
-// const Button = ({ children, onClick, disabled, className }: any) => (
-//   <button 
-//     onClick={onClick} 
-//     disabled={disabled} 
-//     className={`px-6 py-3 rounded-lg font-bold text-white transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 shadow-md ${className}`}
-//   >
-//     {children}
-//   </button>
-// );
+// const Button = ({ children, onClick, disabled, className, variant = "primary" }: any) => {
+//   const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2";
+//   const variants = {
+//     primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm",
+//     outline: "border border-gray-200 hover:bg-gray-50 text-gray-700",
+//     ghost: "hover:bg-gray-100 text-gray-600"
+//   };
+//   return <button onClick={onClick} disabled={disabled} className={`${baseStyle} ${variants[variant as keyof typeof variants]} ${className}`}>{children}</button>;
+// };
 
+// // UPDATED: Input component instead of Select to allow ANY role
 // const RoleInput = ({ value, onChange, placeholder }: any) => (
 //   <div className="relative w-full">
 //     <input 
@@ -1173,7 +808,7 @@ export default function RoadmapPage() {
 //       value={value} 
 //       onChange={(e) => onChange(e.target.value)} 
 //       placeholder={placeholder}
-//       className="w-full bg-white border border-gray-300 text-gray-900 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-gray-400 font-medium"
+//       className="w-full bg-white border border-gray-300 text-gray-900 py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-gray-400"
 //       list="role-suggestions"
 //     />
 //     <datalist id="role-suggestions">
@@ -1182,17 +817,19 @@ export default function RoadmapPage() {
 //       <option value="DevOps Engineer" />
 //       <option value="Data Scientist" />
 //       <option value="Product Manager" />
+//       <option value="Blockchain Developer" />
+//       <option value="Cybersecurity Analyst" />
 //     </datalist>
 //   </div>
 // );
 
 // const getStepStyle = (index: number, title: string = "") => {
 //     const typeLower = title.toLowerCase();
-//     if (index === 0 || typeLower.includes("foundation") || typeLower.includes("current")) return { icon: <CheckCircle />, color: "bg-green-100 text-green-700", border: "border-green-500" };
-//     if (typeLower.includes("gap") || typeLower.includes("acquire")) return { icon: <AlertTriangle />, color: "bg-amber-100 text-amber-700", border: "border-amber-500" };
-//     if (typeLower.includes("project") || typeLower.includes("build")) return { icon: <Hammer />, color: "bg-purple-100 text-purple-700", border: "border-purple-500" };
-//     if (index >= 4 || typeLower.includes("goal") || typeLower.includes("role")) return { icon: <Rocket />, color: "bg-indigo-100 text-indigo-700", border: "border-indigo-500" };
-//     return { icon: <BookOpen />, color: "bg-blue-100 text-blue-700", border: "border-blue-500" };
+//     if (index === 0 || typeLower.includes("foundation") || typeLower.includes("current")) return { icon: <CheckCircle />, color: "bg-green-100 text-green-700" };
+//     if (typeLower.includes("gap") || typeLower.includes("acquire")) return { icon: <AlertTriangle />, color: "bg-amber-100 text-amber-700" };
+//     if (typeLower.includes("project") || typeLower.includes("build")) return { icon: <Hammer />, color: "bg-purple-100 text-purple-700" };
+//     if (index === 4 || typeLower.includes("goal") || typeLower.includes("role")) return { icon: <Rocket />, color: "bg-indigo-100 text-indigo-700" };
+//     return { icon: <BookOpen />, color: "bg-blue-100 text-blue-700" };
 // };
 
 // // --- MAIN PAGE COMPONENT ---
@@ -1218,18 +855,11 @@ export default function RoadmapPage() {
 //       });
 
 //       const data = await res.json();
-      
-//       // ✅ DEBUGGING: Check what the backend is actually sending
-//       console.log("🛣️ Roadmap Data Fetched:", data);
-
 //       if (data.success && data.data && data.data.length > 0) {
 //         const latest = data.data[0];
-//         setSelectedRole(latest.targetRole || latest.role || "Software Engineer");
-        
-//         // ✅ FIX: Robust check for where the array is hiding
-//         const steps = latest.steps || latest.roadmap || latest.roadmap_content || [];
+//         setSelectedRole(latest.targetRole || "Senior Full-Stack Developer");
+//         const steps = latest.steps || latest.roadmap || [];
 //         setRoadmapSteps(steps);
-        
 //         if (latest.level) setUserLevel(latest.level);
 //       }
 //     } catch (err) {
@@ -1241,36 +871,35 @@ export default function RoadmapPage() {
 
 //   const handleGenerateRoadmap = async () => {
 //       setGenerating(true);
-//       setRoadmapSteps([]); // Clear old one while generating
 //       try {
 //         const token = localStorage.getItem("token");
 //         if (!token) return alert("Please log in.");
 
-//         const res = await fetch(`${API_URL}/roadmap/generate`, { // Ensure route matches backend
+//         const res = await fetch(`${API_URL}/roadmap/generate`, {
 //             method: "POST",
 //             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
 //             body: JSON.stringify({ role: selectedRole })
 //         });
 
 //         const data = await res.json();
-//         console.log("🚀 Generation Result:", data);
-
 //         if (data.success) {
-//             // ✅ FIX: Robust extraction for generation result too
-//             const root = data.data;
-//             const newSteps = root.roadmap || root.steps || (Array.isArray(root) ? root : []);
-            
+//             const resultData = data.data.roadmap || data.data; 
+//             let newSteps = [];
+
+//             // Handle different JSON structures safely
+//             if (Array.isArray(resultData)) newSteps = resultData;
+//             else if (resultData?.roadmap) newSteps = resultData.roadmap;
+
+//             // Update User Level from Backend Response
+//             if (resultData?.level) setUserLevel(resultData.level);
+//             else if (data.data.level) setUserLevel(data.data.level);
+
 //             setRoadmapSteps(newSteps);
-//             if (root.level) setUserLevel(root.level);
-            
-//             // Optional: Refresh list to ensure ID is saved
-//             // fetchRoadmap(); 
 //         } else {
-//             alert(data.message || "Failed to generate roadmap.");
+//             alert(data.message || "Failed.");
 //         }
 //       } catch (err) {
-//           console.error("Generation Error:", err);
-//           alert("Something went wrong connecting to the AI.");
+//           console.error("Error:", err);
 //       } finally {
 //           setGenerating(false);
 //       }
@@ -1278,36 +907,31 @@ export default function RoadmapPage() {
 
 //   if (loading) {
 //       return (
-//           <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
+//           <div className="min-h-screen flex items-center justify-center bg-gray-50">
 //               <Loader2 className="animate-spin text-blue-600" size={48} />
-//               <p className="text-gray-500 font-medium">Loading your career path...</p>
 //           </div>
 //       );
 //   }
 
 //   return (
 //     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex">
-//       <main className="flex-1 p-4 md:p-8 overflow-y-auto h-screen custom-scrollbar">
+//       <main className="flex-1 p-4 md:p-8 overflow-y-auto h-screen">
 //         <div className="max-w-7xl mx-auto w-full space-y-10">
-          
-//           <div className="px-2 md:px-0 border-b border-gray-200 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-//             <div>
-//                 <h1 className="text-3xl md:text-4xl font-bold mb-2 text-gray-900">Career Roadmap</h1>
-//                 <p className="text-gray-500">Your personalized, AI-generated path to {selectedRole}.</p>
-//             </div>
+
+//           <div className="px-2 md:px-0 border-b border-gray-200 pb-6">
+//             <h1 className="text-3xl md:text-4xl font-bold mb-2 text-gray-900">Your AI-Powered Growth Roadmap</h1>
+//             <p className="text-gray-500">Interactive, personalized career path based on your resume history.</p>
 //           </div>
 
-//           <Card className="p-8 bg-white border-0 shadow-lg ring-1 ring-black/5">
-//             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-//                 <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-//                     <Map className="text-blue-500" /> Target Goal
-//                 </h2>
-                
+//           <Card className="p-6 bg-white">
+//             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+//                 <h2 className="text-lg md:text-xl font-bold text-gray-800">Target Role</h2>
+
 //                 {/* --- DYNAMIC LEVEL BADGE --- */}
 //                 {userLevel && (
-//                     <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-2 shadow-sm
-//                         ${userLevel.toLowerCase().includes('senior') || userLevel.toLowerCase().includes('advanced') ? 'bg-purple-100 text-purple-700 border-purple-200' : 
-//                           userLevel.toLowerCase().includes('mid') ? 'bg-blue-100 text-blue-700 border-blue-200' : 
+//                     <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border flex items-center gap-2 shadow-sm animate-in fade-in zoom-in
+//                         ${userLevel.toLowerCase().includes('advanced') ? 'bg-purple-100 text-purple-700 border-purple-200' : 
+//                           userLevel.toLowerCase().includes('intermediate') ? 'bg-blue-100 text-blue-700 border-blue-200' : 
 //                           'bg-green-100 text-green-700 border-green-200'}`}>
 //                         <Zap size={14} className="fill-current" /> 
 //                         <span>Current Level: {userLevel}</span>
@@ -1315,123 +939,149 @@ export default function RoadmapPage() {
 //                 )}
 //             </div>
 
-//             <div className="flex flex-col md:flex-row gap-4 md:items-stretch">
+//             <div className="flex flex-col md:flex-row gap-4 md:items-center">
 //               <div className="w-full md:flex-1">
+//                 {/* UPDATED: Uses RoleInput to allow ANY text */}
 //                 <RoleInput 
 //                     value={selectedRole} 
 //                     onChange={setSelectedRole} 
-//                     placeholder="Enter dream job (e.g. Senior Backend Engineer)" 
+//                     placeholder="Enter any job title (e.g. Robotics Engineer)" 
 //                 />
 //               </div>
-//               <Button onClick={handleGenerateRoadmap} disabled={generating} className="w-full md:w-auto min-w-[200px]">
-//                 {generating ? <><Loader2 className="animate-spin" size={20} /> Generating...</> : <><Rocket size={20} /> Generate Plan</>}
+//               <Button onClick={handleGenerateRoadmap} disabled={generating} className="w-full md:w-auto px-8 min-w-[180px]">
+//                 {generating ? <><Loader2 className="animate-spin" size={18} /> Analyzing...</> : <><Rocket size={18} /> Generate Roadmap</>}
 //               </Button>
 //             </div>
 //           </Card>
 
 //           {roadmapSteps.length === 0 ? (
-//              <div className="p-16 text-center border-2 border-dashed border-gray-300 rounded-2xl bg-white/50">
-//                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-//                     <Map size={32} className="text-gray-400"/>
-//                 </div>
-//                 <h3 className="text-xl font-bold text-gray-700 mb-2">No Roadmap Generated Yet</h3>
-//                 <p className="text-gray-500 max-w-md mx-auto">
-//                     Enter your target role above and click <strong>Generate Plan</strong>. Our AI will analyze your resume and build a step-by-step guide.
-//                 </p>
+//              <div className="p-12 text-center border-2 border-dashed border-gray-300 rounded-xl bg-white">
+//                 <Map size={32} className="mx-auto mb-4 text-gray-400"/>
+//                 <p className="text-gray-500">No roadmap found. Enter a target role above and click Generate.</p>
 //              </div>
 //           ) : (
-//             <div className="relative space-y-0 pb-12">
-//                 <div className="absolute left-8 md:left-10 top-8 bottom-0 w-0.5 bg-gray-200" />
-                
+//             <div className="relative space-y-8 pb-12">
 //                 {roadmapSteps.map((step, i) => {
 //                     const style = getStepStyle(i, step.title || step.type);
 //                     return (
-//                     <div key={i} className="relative group mb-12 last:mb-0">
-                        
-//                         {/* ICON MARKER */}
-//                         <div className={`absolute left-2 md:left-4 top-0 w-12 h-12 md:w-12 md:h-12 rounded-full ${style.color} flex items-center justify-center border-4 border-white shadow-md z-10 ring-1 ring-gray-200`}>
-//                             {style.icon}
-//                         </div>
-
-//                         {/* CONTENT CARD */}
-//                         <Card className={`ml-16 md:ml-24 border-l-4 hover:shadow-xl transition-all duration-300 ${style.border}`} style={{ borderLeftWidth: '4px' }}>
-//                             <div className="p-6 md:p-8">
-//                                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
-//                                     <div>
-//                                         <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Step {i + 1}</div>
-//                                         <h3 className="text-2xl font-bold text-gray-900">{step.title}</h3>
+//                     <div key={i} className="relative group">
+//                         {i !== roadmapSteps.length - 1 && (
+//                             <div className="hidden md:block absolute left-8 top-16 bottom-[-2rem] w-0.5 bg-gray-200 z-0" />
+//                         )}
+//                         <div className="p-4 md:p-6 relative z-10">
+//                             <div className={`absolute -left-2 md:-left-6 top-6 w-12 h-12 rounded-xl ${style.color} flex items-center justify-center border-4 border-gray-50 shadow-sm z-20`}>
+//                                 {style.icon}
+//                             </div>
+//                             <Card className="ml-8 md:ml-10 border-l-4 hover:shadow-lg transition-all duration-300" style={{ borderLeftColor: '#2563eb' }}>
+//                                 <div className="p-6">
+//                                     <div className="flex justify-between mb-4">
+//                                         <div>
+//                                             <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
+//                                             <p className="text-sm text-gray-500">{step.description || step.subtitle}</p>
+//                                         </div>
+//                                         <span className="text-xs font-bold uppercase text-gray-400 bg-gray-100 px-2 py-1 h-fit rounded">Step {i + 1}</span>
 //                                     </div>
-//                                     {step.type && (
-//                                         <span className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold uppercase rounded-full self-start">
-//                                             {step.type}
-//                                         </span>
+
+//                                     {/* --- CLICKABLE SKILLS & GAPS --- */}
+//                                     {(step.type === "skills" || step.type === "gaps") && (
+//                                       <div className="flex flex-wrap gap-2">
+//                                         {step.items?.map((item, idx) => {
+//                                           const text = typeof item === 'string' ? item : (item.name || "Skill");
+//                                           const url = getSmartLink(item, step.type);
+//                                           const isGap = step.type === 'gaps';
+//                                           return (
+//                                             <a 
+//                                               key={idx} 
+//                                               href={url} 
+//                                               target="_blank" 
+//                                               rel="noopener noreferrer"
+//                                               className={`px-4 py-2 rounded-full text-sm font-medium border flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer shadow-sm ${
+//                                                 isGap ? 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100' : 'bg-green-50 text-green-900 border-green-200 hover:bg-green-100'
+//                                               }`}
+//                                               title={`Click to find ${text} tutorials`}
+//                                             >
+//                                               {text} 
+//                                               {isGap ? <Youtube size={12} className="opacity-50"/> : <CheckCircle size={12} className="opacity-50"/>}
+//                                             </a>
+//                                           );
+//                                         })}
+//                                       </div>
+//                                     )}
+
+//                                     {/* --- CLICKABLE COURSES --- */}
+//                                     {step.type === "courses" && (
+//                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+//                                         {step.items?.map((item: any, idx: number) => (
+//                                           <a 
+//                                             key={idx}
+//                                             href={getSmartLink(item, "courses")}
+//                                             target="_blank" 
+//                                             rel="noopener noreferrer"
+//                                             className="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-400 hover:shadow-md transition-all group/item block relative overflow-hidden"
+//                                           >
+//                                             <div className="absolute top-0 right-0 p-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
+//                                                 <ExternalLink size={14} className="text-blue-500" />
+//                                             </div>
+//                                             <h4 className="font-bold text-sm text-gray-900 mb-1 group-hover/item:text-blue-600">
+//                                               {item.title}
+//                                             </h4>
+//                                             <div className="flex items-center gap-1 text-xs text-gray-500">
+//                                               <BookOpen size={12} /> {item.platform || "Online Course"}
+//                                             </div>
+//                                           </a>
+//                                         ))}
+//                                       </div>
+//                                     )}
+
+//                                     {/* --- CLICKABLE PROJECTS --- */}
+//                                     {step.type === "projects" && (
+//                                       <div className="space-y-3">
+//                                         {step.items?.map((item, idx) => (
+//                                           <a 
+//                                             key={idx}
+//                                             href={getSmartLink(item, "projects")}
+//                                             target="_blank" 
+//                                             rel="noopener noreferrer"
+//                                             className="bg-gray-50 p-4 rounded-lg text-sm font-medium text-gray-700 border border-gray-100 flex items-center justify-between hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200 transition-colors group/proj"
+//                                           >
+//                                             <div className="flex items-center gap-3">
+//                                                 <div className="w-2 h-2 rounded-full bg-purple-500 shrink-0 group-hover/proj:scale-125 transition-transform"></div>
+//                                                 {typeof item === 'string' ? item : item.title}
+//                                             </div>
+//                                             <Github size={16} className="text-gray-400 group-hover/proj:text-purple-600"/>
+//                                           </a>
+//                                         ))}
+//                                       </div>
+//                                     )}
+
+//                                     {/* --- CLICKABLE ROLES --- */}
+//                                     {step.type === "roles" && (
+//                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+//                                         {step.items?.map((item: any, idx: number) => (
+//                                           <a 
+//                                             key={idx}
+//                                             href={getSmartLink(item, "roles")}
+//                                             target="_blank" 
+//                                             rel="noopener noreferrer"
+//                                             className="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-400 hover:shadow-md transition-all block group/role"
+//                                           >
+//                                             <div className="flex justify-between items-start">
+//                                                 <h4 className="font-bold text-sm text-gray-800 mb-1 group-hover/role:text-indigo-600">{item.title}</h4>
+//                                                 <Linkedin size={14} className="text-gray-300 group-hover/role:text-indigo-500"/>
+//                                             </div>
+//                                             <p className="text-xs text-gray-500 mt-1 flex justify-between items-center">
+//                                               <span>{item.company || "Top Tech Co."}</span>
+//                                               <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded-full font-bold text-[10px] border border-green-100">
+//                                                 {item.match} match
+//                                               </span>
+//                                             </p>
+//                                           </a>
+//                                         ))}
+//                                       </div>
 //                                     )}
 //                                 </div>
-                                
-//                                 {step.description && <p className="text-gray-600 mb-6 leading-relaxed">{step.description}</p>}
-
-//                                 {/* --- DYNAMIC CONTENT RENDERING --- */}
-                                
-//                                 {/* SKILLS & GAPS (Tags) */}
-//                                 {(step.type === "skills" || step.type === "gaps") && (
-//                                     <div className="flex flex-wrap gap-3">
-//                                         {step.items?.map((item, idx) => {
-//                                             const text = typeof item === 'string' ? item : (item.name || "Skill");
-//                                             const url = getSmartLink(item, step.type);
-//                                             const isGap = step.type === 'gaps';
-//                                             return (
-//                                                 <a key={idx} href={url} target="_blank" rel="noopener noreferrer"
-//                                                 className={`px-4 py-2 rounded-lg text-sm font-semibold border flex items-center gap-2 hover:-translate-y-0.5 transition-transform shadow-sm
-//                                                     ${isGap ? 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100' : 'bg-green-50 text-green-900 border-green-200 hover:bg-green-100'}`}
-//                                                 >
-//                                                     {text} {isGap ? <Youtube size={14} className="opacity-50"/> : <CheckCircle size={14} className="opacity-50"/>}
-//                                                 </a>
-//                                             );
-//                                         })}
-//                                     </div>
-//                                 )}
-
-//                                 {/* COURSES (Cards) */}
-//                                 {step.type === "courses" && (
-//                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//                                         {step.items?.map((item: any, idx: number) => (
-//                                             <a key={idx} href={getSmartLink(item, "courses")} target="_blank" rel="noopener noreferrer"
-//                                             className="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-blue-300 hover:bg-white hover:shadow-md transition-all group/course relative overflow-hidden"
-//                                             >
-//                                                 <div className="flex justify-between items-start">
-//                                                     <h4 className="font-bold text-gray-900 group-hover/course:text-blue-600 transition-colors pr-6">{item.title}</h4>
-//                                                     <ExternalLink size={16} className="text-gray-300 group-hover/course:text-blue-500" />
-//                                                 </div>
-//                                                 <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-//                                                     <BookOpen size={12}/> {item.platform || "Udemy/Coursera"}
-//                                                 </p>
-//                                             </a>
-//                                         ))}
-//                                     </div>
-//                                 )}
-
-//                                 {/* PROJECTS (List) */}
-//                                 {step.type === "projects" && (
-//                                     <div className="space-y-3">
-//                                         {step.items?.map((item: any, idx: number) => (
-//                                             <a key={idx} href={getSmartLink(item, "projects")} target="_blank" rel="noopener noreferrer"
-//                                             className="block bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-purple-300 hover:bg-purple-50/30 transition-all group/proj"
-//                                             >
-//                                                 <div className="flex items-center gap-3">
-//                                                     <div className="p-2 bg-white rounded-lg shadow-sm text-purple-600">
-//                                                         <Github size={20} />
-//                                                     </div>
-//                                                     <div>
-//                                                         <h4 className="font-bold text-gray-900 group-hover/proj:text-purple-700">{typeof item === 'string' ? item : item.title}</h4>
-//                                                         <p className="text-xs text-gray-500 mt-0.5">Click to find example repos</p>
-//                                                     </div>
-//                                                 </div>
-//                                             </a>
-//                                         ))}
-//                                     </div>
-//                                 )}
-//                             </div>
-//                         </Card>
+//                             </Card>
+//                         </div>
 //                     </div>
 //                     );
 //                 })}
@@ -1442,3 +1092,228 @@ export default function RoadmapPage() {
 //     </div>
 //   );
 // }
+
+
+
+
+
+
+
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  Loader2, CheckCircle, BookOpen, Rocket,
+  ExternalLink, Zap, Youtube, Github, Book, FileText, Video,
+  Search, GraduationCap, MonitorPlay
+} from "lucide-react";
+
+const API_URL = "http://localhost:5000/api";
+
+// --- INTERFACES ---
+interface RoadmapResource {
+  title: string;
+  type: string;
+  url?: string;
+}
+
+interface RoadmapStep {
+  step: number;
+  title: string;
+  description: string;
+  duration?: string;
+  items?: string[]; // Old format (Skills list)
+  resources?: RoadmapResource[]; // New format (Specific links)
+}
+
+// --- LINK GENERATORS ---
+const getSearchLink = (term: string, type: 'video' | 'book' | 'course') => {
+  const query = encodeURIComponent(term);
+  switch (type) {
+    case 'video': return `https://www.youtube.com/results?search_query=${query}+tutorial`;
+    case 'book': return `https://www.google.com/search?tbm=bks&q=${query}`;
+    case 'course': return `https://www.udemy.com/courses/search/?q=${query}`;
+    default: return `https://www.google.com/search?q=${query}`;
+  }
+};
+
+const getDynamicLink = (res: RoadmapResource) => {
+  if (res.url) return res.url;
+  return getSearchLink(res.title, res.type as any);
+};
+
+// --- COMPONENTS ---
+const Card = ({ className, children }: any) => (
+  <div className={`bg-white rounded-xl border border-gray-200 shadow-sm ${className}`}>{children}</div>
+);
+
+const RoleInput = ({ value, onChange, placeholder }: any) => (
+  <div className="relative w-full">
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full bg-white border border-gray-300 text-gray-900 py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+    />
+  </div>
+);
+
+export default function RoadmapPage() {
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const [roadmapSteps, setRoadmapSteps] = useState<RoadmapStep[]>([]);
+  const [selectedRole, setSelectedRole] = useState("Full Stack Developer");
+
+  useEffect(() => {
+    fetchRoadmap();
+  }, []);
+
+  const fetchRoadmap = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) { setLoading(false); return; }
+
+      const res = await fetch(`${API_URL}/roadmap`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      // Handle both data structures safely
+      if (data.success && data.data && data.data.length > 0) {
+        const latest = data.data[0];
+        setRoadmapSteps(latest.roadmap || latest.steps || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGenerate = async () => {
+    setGenerating(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/roadmap/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ role: selectedRole })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRoadmapSteps(data.data.roadmap || data.data);
+      }
+    } catch (err) {
+      alert("Failed to generate roadmap");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
+
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex p-4 md:p-8">
+      <main className="flex-1 max-w-5xl mx-auto w-full space-y-8">
+
+        {/* Header */}
+        <div className="space-y-4">
+          <div className="px-2 md:px-0 border-b border-gray-200 pb-6">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 text-gray-900">Your AI-Powered Growth Roadmap</h1>
+            <p className="text-gray-500">Interactive, personalized career path based on your resume history.</p>
+          </div>
+          <Card className="p-4 flex gap-4">
+            <RoleInput value={selectedRole} onChange={setSelectedRole} placeholder="Enter Job Role (e.g. MERN Stack)" />
+            <button
+              onClick={handleGenerate}
+              disabled={generating}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+            >
+              {generating ? <Loader2 className="animate-spin" size={18} /> : <Rocket size={18} />}
+              Generate
+            </button>
+          </Card>
+        </div>
+
+        {/* Roadmap Steps */}
+        <div className="space-y-6 relative">
+          {roadmapSteps.length > 0 ? roadmapSteps.map((step, i) => (
+            <div key={i} className="flex gap-4 md:gap-6 group">
+              {/* Vertical Line */}
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold z-10 ${i === 0 ? 'bg-green-600 text-white' : 'bg-white border-2 border-blue-600 text-blue-600'}`}>
+                  {i + 1}
+                </div>
+                {i !== roadmapSteps.length - 1 && <div className="w-0.5 flex-1 bg-gray-200 my-2 group-hover:bg-blue-200 transition-colors"></div>}
+              </div>
+
+              {/* Step Content */}
+              <Card className="flex-1 p-6">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">{step.title}</h3>
+                  <p className="text-gray-500 mt-1">{step.description}</p>
+                  {step.duration && (
+                    <span className="inline-block mt-2 text-xs font-semibold bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                      ⏱ {step.duration}
+                    </span>
+                  )}
+                </div>
+
+                {/* --- FALLBACK: SKILL BUTTONS (If specific resources are missing) --- */}
+                {step.items && (!step.resources || step.resources.length === 0) && (
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {step.items.map((skill, idx) => (
+                      <a
+                        key={idx}
+                        href={getSearchLink(skill, 'video')}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-3 py-1.5 rounded-full border bg-gray-50 hover:bg-white hover:border-red-300 hover:text-red-600 transition-all text-sm font-medium flex items-center gap-2 cursor-pointer"
+                      >
+                        {skill} <Youtube size={14} />
+                      </a>
+                    ))}
+                  </div>
+                )}
+
+                {/* --- NEW: SPECIFIC RESOURCES (Best Quality) --- */}
+                {step.resources && step.resources.length > 0 && (
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {step.resources.map((res, idx) => (
+                      <a
+                        key={idx}
+                        href={getDynamicLink(res)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:border-blue-300 hover:bg-blue-50/50 transition-all bg-gray-50/50"
+                      >
+                        <div className="bg-white p-2 rounded-md shadow-sm text-blue-600">
+                          {res.type === 'video' ? <Youtube className="text-red-600" /> :
+                            res.type === 'book' ? <Book className="text-orange-600" /> :
+                              <MonitorPlay className="text-indigo-600" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">{res.title}</p>
+                          <p className="text-xs text-gray-500 capitalize flex items-center gap-1">
+                            {res.type} <ExternalLink size={10} />
+                          </p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </Card>
+            </div>
+          )) : (
+            <div className="text-center py-12 text-gray-500 border-2 border-dashed rounded-xl">
+              <Rocket size={48} className="mx-auto text-gray-300 mb-4" />
+              <p>Enter your dream role above and click Generate to start your journey.</p>
+            </div>
+          )}
+        </div>
+
+      </main>
+    </div>
+  );
+}
