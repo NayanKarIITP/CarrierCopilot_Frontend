@@ -212,284 +212,523 @@
 
 
 
+// "use client";
+
+// import { useTheme } from "next-themes";
+// import { useState, useEffect } from "react";
+// import { useAuth } from "@/contexts/auth-context";
+// import { Button } from "@/components/ui/button";
+// import { 
+//   Moon, Sun, User, Shield, LogOut, Camera, Lock, Mail, Save, Loader2 
+// } from "lucide-react";
+
+// export default function SettingsPage() {
+//   const { theme, setTheme } = useTheme();
+//   const { user, logout, updateUser } = useAuth(); // ✅ Get updateUser to refresh Navbar
+//   const [mounted, setMounted] = useState(false);
+
+//   // Form States
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [formData, setFormData] = useState({
+//     fullName: "",
+//     email: "",
+//     currentPassword: "",
+//     newPassword: ""
+//   });
+//   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+//   // Load user data when component mounts
+//   useEffect(() => {
+//     setMounted(true);
+//     if (user) {
+//       setFormData(prev => ({
+//         ...prev,
+//         fullName: user.name || "",
+//         email: user.email || ""
+//       }));
+//     }
+//   }, [user]);
+
+//   if (!mounted) return null;
+
+//   // Handle Text Input Changes
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+//   // ✅ 1. HANDLE IMAGE UPLOAD (Convert to Base64 for DB)
+//   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onloadend = () => {
+//         const base64String = reader.result as string;
+//         setPreviewImage(base64String);
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
+
+//   // ✅ 2. SAVE CHANGES TO BACKEND
+//   const handleSave = async () => {
+//     setIsLoading(true);
+//     const token = localStorage.getItem("token");
+//     const API_URL = "http://localhost:5000/api"; 
+
+//     try {
+//       // --- A. Update Profile Info ---
+//       const profileRes = await fetch(`${API_URL}/user/profile`, {
+//         method: "PUT",
+//         headers: { 
+//           "Content-Type": "application/json",
+//           "Authorization": `Bearer ${token}` 
+//         },
+//         body: JSON.stringify({
+//           fullName: formData.fullName,
+//           email: formData.email,
+//           photoURL: previewImage || user?.avatar 
+//         })
+//       });
+
+//       const profileData = await profileRes.json();
+//       if (!profileData.success) throw new Error(profileData.message);
+
+//       // --- B. Update Password (Optional) ---
+//       if (formData.currentPassword && formData.newPassword) {
+//         const passRes = await fetch(`${API_URL}/user/password`, {
+//           method: "PUT",
+//           headers: { 
+//             "Content-Type": "application/json",
+//             "Authorization": `Bearer ${token}` 
+//           },
+//           body: JSON.stringify({
+//             currentPassword: formData.currentPassword,
+//             newPassword: formData.newPassword
+//           })
+//         });
+
+//         const passData = await passRes.json();
+//         if (!passData.success) throw new Error(passData.message);
+//       }
+
+//       // --- C. Update Global State (Refreshes Navbar) ---
+//       // ✅ FIX: Map backend 'fullName' to context 'name' correctly
+//       if (updateUser) {
+//         updateUser({
+//           name: profileData.data.fullName, // This fixes the "User" name bug
+//           email: profileData.data.email,
+//           avatar: profileData.data.photoURL
+//         });
+//       }
+
+//       alert(" Profile updated successfully!");
+//       setFormData(prev => ({ ...prev, currentPassword: "", newPassword: "" }));
+
+//     } catch (err: any) {
+//       console.error(err);
+//       alert(`❌ Error: ${err.message || "Failed to update profile"}`);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="bg-background text-foreground min-h-screen pb-20">
+//       <main className="max-w-3xl mx-auto p-4 md:p-8">
+
+//         {/* Header */}
+//         <div className="space-y-2 border-b border-border pb-6 mb-8">
+//           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Settings</h1>
+//           <p className="text-muted-foreground">Manage your profile and account preferences.</p>
+//         </div>
+
+//         <div className="space-y-8">
+
+//           {/* --- 1. PROFILE PHOTO SECTION (Clickable) --- */}
+//           <div className="flex flex-col items-center justify-center space-y-4">
+//             <div className="relative group">
+//               {/* Hidden Input triggered by Label */}
+//               <input 
+//                 type="file" 
+//                 id="photo-upload" 
+//                 className="hidden" 
+//                 accept="image/*"
+//                 onChange={handleImageUpload}
+//               />
+//               <label 
+//                 htmlFor="photo-upload" 
+//                 className="cursor-pointer block relative w-32 h-32 rounded-full overflow-hidden border-4 border-card shadow-lg hover:border-primary transition-colors"
+//               >
+//                 <img 
+//                   src={previewImage || user?.avatar || `https://ui-avatars.com/api/?name=${formData.fullName}`} 
+//                   alt="Profile" 
+//                   className="w-full h-full object-cover"
+//                 />
+//                 {/* Hover Overlay with Icon */}
+//                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+//                   <Camera className="text-white drop-shadow-md" size={32} />
+//                 </div>
+//               </label>
+//             </div>
+//             <div className="text-center">
+//               <h2 className="text-xl font-bold text-foreground">{user?.name || "User"}</h2>
+//               <p className="text-sm text-muted-foreground">{user?.email || "email@example.com"}</p>
+//             </div>
+//           </div>
+
+//           {/* --- 2. PERSONAL INFORMATION --- */}
+//           <div className="glass rounded-2xl border border-border p-6 shadow-sm">
+//             <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+//               <User size={20} className="text-blue-500" />
+//               Personal Information
+//             </h2>
+
+//             <div className="space-y-4">
+//               <div className="grid gap-2">
+//                 <label className="text-sm font-medium text-muted-foreground">Full Name</label>
+//                 <input 
+//                   type="text" 
+//                   name="fullName"
+//                   value={formData.fullName}
+//                   onChange={handleChange}
+//                   className="w-full p-3 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+//                   placeholder="Enter your full name"
+//                 />
+//               </div>
+
+//               <div className="grid gap-2">
+//                 <label className="text-sm font-medium text-muted-foreground">Email Address</label>
+//                 <div className="relative">
+//                   <Mail size={18} className="absolute left-3 top-3.5 text-muted-foreground" />
+//                   <input 
+//                     type="email" 
+//                     name="email"
+//                     value={formData.email}
+//                     onChange={handleChange}
+//                     className="w-full p-3 pl-10 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+//                     placeholder="Enter your email"
+//                   />
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* --- 3. SECURITY (Password) --- */}
+//           <div className="glass rounded-2xl border border-border p-6 shadow-sm">
+//             <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+//               <Lock size={20} className="text-amber-500" />
+//               Security
+//             </h2>
+
+//             <div className="space-y-4">
+//               <div className="grid gap-2">
+//                 <label className="text-sm font-medium text-muted-foreground">Current Password</label>
+//                 <input 
+//                   type="password" 
+//                   name="currentPassword"
+//                   value={formData.currentPassword}
+//                   onChange={handleChange}
+//                   className="w-full p-3 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+//                   placeholder="••••••••"
+//                 />
+//               </div>
+
+//               <div className="grid gap-2">
+//                 <label className="text-sm font-medium text-muted-foreground">New Password</label>
+//                 <input 
+//                   type="password" 
+//                   name="newPassword"
+//                   value={formData.newPassword}
+//                   onChange={handleChange}
+//                   className="w-full p-3 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+//                   placeholder="Leave blank to keep current"
+//                 />
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* --- SAVE BUTTON --- */}
+//           <div className="flex justify-end">
+//             <Button 
+//               onClick={handleSave} 
+//               disabled={isLoading}
+//               className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-2 h-11 shadow-lg shadow-primary/20"
+//             >
+//               {isLoading ? <Loader2 className="animate-spin mr-2" size={18} /> : <Save className="mr-2" size={18} />}
+//               Save Changes
+//             </Button>
+//           </div>
+
+//           {/* --- 4. APPEARANCE --- */}
+//           <div className="glass rounded-2xl border border-border p-6 shadow-sm mt-8">
+//             <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+//               {theme === "dark" ? <Moon size={20} className="text-purple-500" /> : <Sun size={20} className="text-orange-500" />}
+//               Appearance
+//             </h2>
+
+//             <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
+//               <div>
+//                 <p className="font-semibold text-foreground">{theme === "dark" ? "Dark Mode" : "Light Mode"}</p>
+//                 <p className="text-sm text-muted-foreground">Adjust the interface theme</p>
+//               </div>
+//               <button
+//                 onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+//                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+//                   theme === "dark" ? "bg-indigo-600" : "bg-gray-300"
+//                 }`}
+//               >
+//                 <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${theme === "dark" ? "translate-x-6" : "translate-x-1"}`} />
+//               </button>
+//             </div>
+//           </div>
+
+//           {/* --- 5. LOGOUT --- */}
+//           <Button 
+//             onClick={logout} 
+//             variant="destructive"
+//             className="w-full h-12 text-base font-semibold gap-2 shadow-sm mt-4"
+//           >
+//             <LogOut size={18} />
+//             Sign Out
+//           </Button>
+
+//         </div>
+//       </main>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/auth-context";
+import api from "@/lib/api"; // ✅ CENTRAL API
 import { Button } from "@/components/ui/button";
-import { 
-  Moon, Sun, User, Shield, LogOut, Camera, Lock, Mail, Save, Loader2 
+import {
+  Moon, Sun, User, LogOut, Camera, Lock, Mail, Save, Loader2
 } from "lucide-react";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
-  const { user, logout, updateUser } = useAuth(); // ✅ Get updateUser to refresh Navbar
+  const { user, logout, updateUser } = useAuth();
   const [mounted, setMounted] = useState(false);
-  
-  // Form States
+
   const [isLoading, setIsLoading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     currentPassword: "",
-    newPassword: ""
+    newPassword: "",
   });
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  // Load user data when component mounts
   useEffect(() => {
     setMounted(true);
     if (user) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         fullName: user.name || "",
-        email: user.email || ""
+        email: user.email || "",
       }));
     }
   }, [user]);
 
   if (!mounted) return null;
 
-  // Handle Text Input Changes
+  /* ---------- HANDLERS ---------- */
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ 1. HANDLE IMAGE UPLOAD (Convert to Base64 for DB)
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setPreviewImage(base64String);
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
-  // ✅ 2. SAVE CHANGES TO BACKEND
+  /* ---------- SAVE ---------- */
+
   const handleSave = async () => {
     setIsLoading(true);
-    const token = localStorage.getItem("token");
-    const API_URL = "http://localhost:5000/api"; 
-
     try {
-      // --- A. Update Profile Info ---
-      const profileRes = await fetch(`${API_URL}/user/profile`, {
-        method: "PUT",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` 
-        },
-        body: JSON.stringify({
-          fullName: formData.fullName,
-          email: formData.email,
-          photoURL: previewImage || user?.avatar 
-        })
+      // 1️⃣ Update profile
+      const profileRes = await api.put("/user/profile", {
+        fullName: formData.fullName,
+        email: formData.email,
+        photoURL: previewImage || user?.avatar,
       });
 
-      const profileData = await profileRes.json();
-      if (!profileData.success) throw new Error(profileData.message);
+      if (!profileRes.data?.success) {
+        throw new Error(profileRes.data?.message || "Profile update failed");
+      }
 
-      // --- B. Update Password (Optional) ---
+      // 2️⃣ Update password (optional)
       if (formData.currentPassword && formData.newPassword) {
-        const passRes = await fetch(`${API_URL}/user/password`, {
-          method: "PUT",
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` 
-          },
-          body: JSON.stringify({
-            currentPassword: formData.currentPassword,
-            newPassword: formData.newPassword
-          })
+        const passRes = await api.put("/user/password", {
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
         });
-        
-        const passData = await passRes.json();
-        if (!passData.success) throw new Error(passData.message);
+
+        if (!passRes.data?.success) {
+          throw new Error(passRes.data?.message || "Password update failed");
+        }
       }
 
-      // --- C. Update Global State (Refreshes Navbar) ---
-      // ✅ FIX: Map backend 'fullName' to context 'name' correctly
-      if (updateUser) {
-        updateUser({
-          name: profileData.data.fullName, // This fixes the "User" name bug
-          email: profileData.data.email,
-          avatar: profileData.data.photoURL
-        });
-      }
+      // 3️⃣ Update global auth state (Navbar refresh)
+      updateUser({
+        name: profileRes.data.data.fullName,
+        email: profileRes.data.data.email,
+        avatar: profileRes.data.data.photoURL,
+      });
 
-      alert(" Profile updated successfully!");
-      setFormData(prev => ({ ...prev, currentPassword: "", newPassword: "" }));
+      alert("✅ Profile updated successfully");
+      setFormData((p) => ({ ...p, currentPassword: "", newPassword: "" }));
 
     } catch (err: any) {
       console.error(err);
-      alert(`❌ Error: ${err.message || "Failed to update profile"}`);
+      alert(`❌ ${err.message || "Failed to update profile"}`);
     } finally {
       setIsLoading(false);
     }
   };
 
+  /* ---------- UI ---------- */
+
   return (
-    <div className="bg-background text-foreground min-h-screen pb-20">
+    <div className="min-h-screen bg-background text-foreground pb-20">
       <main className="max-w-3xl mx-auto p-4 md:p-8">
-        
-        {/* Header */}
-        <div className="space-y-2 border-b border-border pb-6 mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Settings</h1>
-          <p className="text-muted-foreground">Manage your profile and account preferences.</p>
+
+        {/* HEADER */}
+        <div className="border-b border-border pb-6 mb-8">
+          <h1 className="text-4xl font-bold">Settings</h1>
+          <p className="text-muted-foreground">Manage your profile and preferences</p>
         </div>
 
         <div className="space-y-8">
-          
-          {/* --- 1. PROFILE PHOTO SECTION (Clickable) --- */}
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="relative group">
-              {/* Hidden Input triggered by Label */}
-              <input 
-                type="file" 
-                id="photo-upload" 
-                className="hidden" 
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-              <label 
-                htmlFor="photo-upload" 
-                className="cursor-pointer block relative w-32 h-32 rounded-full overflow-hidden border-4 border-card shadow-lg hover:border-primary transition-colors"
-              >
-                <img 
-                  src={previewImage || user?.avatar || `https://ui-avatars.com/api/?name=${formData.fullName}`} 
-                  alt="Profile" 
-                  className="w-full h-full object-cover"
-                />
-                {/* Hover Overlay with Icon */}
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <Camera className="text-white drop-shadow-md" size={32} />
-                </div>
-              </label>
-            </div>
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-foreground">{user?.name || "User"}</h2>
-              <p className="text-sm text-muted-foreground">{user?.email || "email@example.com"}</p>
-            </div>
-          </div>
 
-          {/* --- 2. PERSONAL INFORMATION --- */}
-          <div className="glass rounded-2xl border border-border p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
-              <User size={20} className="text-blue-500" />
-              Personal Information
-            </h2>
+          {/* PROFILE IMAGE */}
+          <div className="flex flex-col items-center gap-4">
+            <input
+              type="file"
+              id="photo-upload"
+              className="hidden"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
 
-            <div className="space-y-4">
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-muted-foreground">Full Name</label>
-                <input 
-                  type="text" 
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  className="w-full p-3 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
-                  placeholder="Enter your full name"
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-muted-foreground">Email Address</label>
-                <div className="relative">
-                  <Mail size={18} className="absolute left-3 top-3.5 text-muted-foreground" />
-                  <input 
-                    type="email" 
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full p-3 pl-10 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
-                    placeholder="Enter your email"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* --- 3. SECURITY (Password) --- */}
-          <div className="glass rounded-2xl border border-border p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
-              <Lock size={20} className="text-amber-500" />
-              Security
-            </h2>
-
-            <div className="space-y-4">
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-muted-foreground">Current Password</label>
-                <input 
-                  type="password" 
-                  name="currentPassword"
-                  value={formData.currentPassword}
-                  onChange={handleChange}
-                  className="w-full p-3 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
-                  placeholder="••••••••"
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <label className="text-sm font-medium text-muted-foreground">New Password</label>
-                <input 
-                  type="password" 
-                  name="newPassword"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  className="w-full p-3 bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
-                  placeholder="Leave blank to keep current"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* --- SAVE BUTTON --- */}
-          <div className="flex justify-end">
-            <Button 
-              onClick={handleSave} 
-              disabled={isLoading}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-2 h-11 shadow-lg shadow-primary/20"
+            <label
+              htmlFor="photo-upload"
+              className="relative w-32 h-32 rounded-full overflow-hidden cursor-pointer border-4 border-border"
             >
-              {isLoading ? <Loader2 className="animate-spin mr-2" size={18} /> : <Save className="mr-2" size={18} />}
+              <img
+                src={previewImage || user?.avatar || `https://ui-avatars.com/api/?name=${formData.fullName}`}
+                className="w-full h-full object-cover"
+                alt="Profile"
+              />
+              <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 flex items-center justify-center transition">
+                <Camera className="text-white" size={32} />
+              </div>
+            </label>
+
+            <div className="text-center">
+              <h2 className="text-xl font-bold">{user?.name}</h2>
+              <p className="text-muted-foreground">{user?.email}</p>
+            </div>
+          </div>
+
+          {/* PERSONAL INFO */}
+          <div className="glass p-6 rounded-2xl border border-border">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
+              <User /> Personal Info
+            </h3>
+
+            <input
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="Full Name"
+              className="w-full p-3 rounded-lg bg-muted/30 border border-border mb-4"
+            />
+
+            <div className="relative">
+              <Mail size={18} className="absolute left-3 top-3.5 text-muted-foreground" />
+              <input
+                name="email"
+                value={formData.email}
+                disabled
+                className="w-full p-3 pl-10 rounded-lg bg-muted/30 border border-border opacity-70 cursor-not-allowed"
+              />
+
+            </div>
+          </div>
+
+          {/* SECURITY */}
+          <div className="glass p-6 rounded-2xl border border-border">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
+              <Lock /> Security
+            </h3>
+
+            <input
+              type="password"
+              name="currentPassword"
+              placeholder="Current Password"
+              value={formData.currentPassword}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-muted/30 border border-border mb-4"
+            />
+
+            <input
+              type="password"
+              name="newPassword"
+              placeholder="New Password"
+              value={formData.newPassword}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-muted/30 border border-border"
+            />
+          </div>
+
+          {/* SAVE */}
+          <div className="flex justify-end">
+            <Button onClick={handleSave} disabled={isLoading}>
+              {isLoading ? <Loader2 className="animate-spin mr-2" /> : <Save className="mr-2" />}
               Save Changes
             </Button>
           </div>
 
-          {/* --- 4. APPEARANCE --- */}
-          <div className="glass rounded-2xl border border-border p-6 shadow-sm mt-8">
-            <h2 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
-              {theme === "dark" ? <Moon size={20} className="text-purple-500" /> : <Sun size={20} className="text-orange-500" />}
-              Appearance
-            </h2>
+          {/* THEME */}
+          <div className="glass p-6 rounded-2xl border border-border">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
+              {theme === "dark" ? <Moon /> : <Sun />} Appearance
+            </h3>
 
-            <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
-              <div>
-                <p className="font-semibold text-foreground">{theme === "dark" ? "Dark Mode" : "Light Mode"}</p>
-                <p className="text-sm text-muted-foreground">Adjust the interface theme</p>
-              </div>
-              <button
-                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                  theme === "dark" ? "bg-indigo-600" : "bg-gray-300"
-                }`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${theme === "dark" ? "translate-x-6" : "translate-x-1"}`} />
-              </button>
-            </div>
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="px-4 py-2 rounded-lg bg-muted"
+            >
+              Switch to {theme === "dark" ? "Light" : "Dark"} Mode
+            </button>
           </div>
 
-          {/* --- 5. LOGOUT --- */}
-          <Button 
-            onClick={logout} 
-            variant="destructive"
-            className="w-full h-12 text-base font-semibold gap-2 shadow-sm mt-4"
-          >
-            <LogOut size={18} />
-            Sign Out
+          {/* LOGOUT */}
+          <Button variant="destructive" onClick={logout} className="w-full">
+            <LogOut className="mr-2" /> Sign Out
           </Button>
 
         </div>
