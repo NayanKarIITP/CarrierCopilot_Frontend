@@ -494,13 +494,13 @@
 
 "use client";
 
-import Navigation from "@/components/navigation";
 import PDFViewer from "@/components/resume/pdf-viewer";
 import ResumeScore from "@/components/resume/resume-score";
 import FeedbackTabs from "@/components/resume/feedback-tabs";
 import { Upload, AlertCircle, Sparkles, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 interface ParsedResume {
   skills?: string[];
@@ -513,6 +513,8 @@ interface ParsedResume {
 }
 
 export default function ResumePage() {
+  const router = useRouter();
+
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [parsedData, setParsedData] = useState<ParsedResume | null>(null);
@@ -520,6 +522,9 @@ export default function ResumePage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /* ---------------------------------------------------
+     LOAD LAST SAVED RESUME
+  --------------------------------------------------- */
   useEffect(() => {
     fetchLatestResume();
   }, []);
@@ -542,14 +547,22 @@ export default function ResumePage() {
           improvements: latest.weaknesses || [],
         });
       }
-    } catch (err) {
-      console.error("Failed to load resume:", err);
-      setError("Could not load previous resume data.");
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        router.push("/login");
+      } else {
+        console.error("Failed to load resume:", err);
+        setError("Could not load previous resume data.");
+      }
     } finally {
       setLoading(false);
     }
   }
 
+  /* ---------------------------------------------------
+     FILE SELECT
+  --------------------------------------------------- */
   async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -566,6 +579,9 @@ export default function ResumePage() {
     await uploadResume(file);
   }
 
+  /* ---------------------------------------------------
+     UPLOAD RESUME
+  --------------------------------------------------- */
   async function uploadResume(file: File) {
     const form = new FormData();
     form.append("file", file);
@@ -591,17 +607,26 @@ export default function ResumePage() {
         improvements: parsed.weaknesses || [],
       });
     } catch (err: any) {
-      console.error("Upload error:", err);
-      setError(err.message || "Upload failed.");
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        router.push("/login");
+      } else {
+        console.error("Upload error:", err);
+        setError(err.message || "Upload failed.");
+      }
     } finally {
       setUploading(false);
     }
   }
 
+  /* ---------------------------------------------------
+     UI
+  --------------------------------------------------- */
   return (
     <div className="bg-gray-50 dark:bg-background min-h-screen">
       <main className="md:ml-20">
         <div className="max-w-7xl mx-auto px-6 py-10">
+
           <div className="mb-8">
             <div className="flex items-center gap-2 text-indigo-600">
               <Sparkles size={14} /> AI Powered
@@ -633,7 +658,10 @@ export default function ResumePage() {
               </div>
               <div className="lg:col-span-8 space-y-6">
                 <ResumeScore score={score} loading={uploading || loading} />
-                <FeedbackTabs parsedData={parsedData} loading={uploading || loading} />
+                <FeedbackTabs
+                  parsedData={parsedData}
+                  loading={uploading || loading}
+                />
               </div>
             </div>
           )}
