@@ -931,7 +931,6 @@
 
 
 
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -943,9 +942,10 @@ import QuestionDisplay from "@/components/interviewer/question-display";
 import LiveFeedback from "@/components/interviewer/live-feedback";
 
 import {
-  Loader2, Mic, MicOff, Send,
-  BarChart3, Volume2, VolumeX, Video, Activity, X,
-  Settings2, Play, Sparkles, User, Briefcase
+  Loader2,
+  Mic,
+  MicOff,
+  BarChart3,
 } from "lucide-react";
 
 // ---------------- TYPES ----------------
@@ -980,16 +980,22 @@ export default function InterviewerPage() {
     level: "Mid-Level",
   });
 
-  const [status, setStatus] = useState<"setup" | "active" | "analyzing" | "completed">("setup");
-  const [questionCount, setQuestionCount] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState<Question>({ id: "0", text: "" });
-  const [interviewStage, setInterviewStage] = useState<"main" | "followup">("main");
-  const [loading, setLoading] = useState(false);
-  const [ttsEnabled, setTtsEnabled] = useState(true);
-  const [mobileTab, setMobileTab] = useState<"interview" | "analysis">("interview");
+  const [status, setStatus] =
+    useState<"setup" | "active" | "analyzing" | "completed">("setup");
 
+  const [questionCount, setQuestionCount] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState<Question>({
+    id: "0",
+    text: "",
+  });
+
+  const [interviewStage, setInterviewStage] =
+    useState<"main" | "followup">("main");
+
+  const [loading, setLoading] = useState(false);
   const [videoMetrics, setVideoMetrics] = useState<any>(null);
-  const [transcriptAnalysis, setTranscriptAnalysis] = useState<AnalysisData | null>(null);
+  const [transcriptAnalysis, setTranscriptAnalysis] =
+    useState<AnalysisData | null>(null);
   const [transcript, setTranscript] = useState("");
 
   const [isListening, setIsListening] = useState(false);
@@ -997,8 +1003,12 @@ export default function InterviewerPage() {
 
   // ---------------- SPEECH RECOGNITION ----------------
   useEffect(() => {
-    if (typeof window !== "undefined" && (window.SpeechRecognition || window.webkitSpeechRecognition)) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (
+      typeof window !== "undefined" &&
+      (window.SpeechRecognition || window.webkitSpeechRecognition)
+    ) {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
 
       recognition.continuous = true;
@@ -1020,36 +1030,29 @@ export default function InterviewerPage() {
     }
   }, []);
 
+  const stopListeningSafe = () => {
+    try {
+      recognitionRef.current?.stop();
+    } catch {}
+    setIsListening(false);
+  };
+
   const toggleListening = () => {
-    if (!recognitionRef.current) return alert("Speech recognition not supported.");
+    if (!recognitionRef.current) {
+      alert("Speech recognition not supported.");
+      return;
+    }
     if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
+      stopListeningSafe();
     } else {
       recognitionRef.current.start();
       setIsListening(true);
     }
   };
 
-  // ---------------- TEXT TO SPEECH ----------------
-  useEffect(() => {
-    if (status === "active" && currentQuestion.text && ttsEnabled) {
-      const text =
-        interviewStage === "main"
-          ? currentQuestion.text
-          : currentQuestion.follow_up;
-
-      if (!text) return;
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
-    }
-  }, [currentQuestion, interviewStage, status, ttsEnabled]);
-
   // ---------------- API ACTIONS ----------------
   const startSession = async () => {
-    if (!config.role) return alert("Please enter a role.");
     setLoading(true);
-
     try {
       const res = await api.post("/interview/start", {
         role: config.role,
@@ -1057,7 +1060,7 @@ export default function InterviewerPage() {
       });
 
       if (res.data?.success) {
-        setConfig((prev) => ({ ...prev, sessionId: res.data.sessionId }));
+        setConfig((p) => ({ ...p, sessionId: res.data.sessionId }));
         setCurrentQuestion({
           id: res.data.question._id,
           text: res.data.question.text,
@@ -1066,8 +1069,7 @@ export default function InterviewerPage() {
         setQuestionCount(1);
         setStatus("active");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert("Failed to start interview.");
     } finally {
       setLoading(false);
@@ -1075,13 +1077,9 @@ export default function InterviewerPage() {
   };
 
   const submitAnswer = async () => {
-    if (!transcript.trim()) return;
+    if (!transcript.trim() || !config.sessionId) return;
 
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    }
-
+    stopListeningSafe();
     setStatus("analyzing");
 
     try {
@@ -1093,10 +1091,9 @@ export default function InterviewerPage() {
 
       if (res.data?.success) {
         setTranscriptAnalysis(res.data.data.analysis);
-        setTimeout(handleStageTransition, 5000);
+        setTimeout(handleStageTransition, 4000);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       setStatus("active");
     }
   };
@@ -1113,8 +1110,7 @@ export default function InterviewerPage() {
   };
 
   const fetchNextQuestion = async () => {
-    if (questionCount >= MAX_QUESTIONS) {
-      setStatus("completed");
+    if (!config.sessionId || questionCount >= MAX_QUESTIONS) {
       router.push(`/performance?session=${config.sessionId}`);
       return;
     }
@@ -1140,21 +1136,9 @@ export default function InterviewerPage() {
         setInterviewStage("main");
         setStatus("active");
       }
-    } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleEndSession = async () => {
-    try {
-      await api.post("/interview/end", {
-        sessionId: config.sessionId,
-        fullTranscript: transcript,
-      });
-    } catch {}
-    router.push(`/performance?session=${config.sessionId}`);
   };
 
   // ---------------- UI ----------------
@@ -1167,7 +1151,10 @@ export default function InterviewerPage() {
 
       <main className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
-          <VideoFeed isStreaming={status !== "completed"} onMetrics={setVideoMetrics} />
+          <VideoFeed
+            isStreaming={status !== "completed"}
+            onMetrics={setVideoMetrics}
+          />
 
           {status === "setup" && (
             <button
@@ -1202,6 +1189,7 @@ export default function InterviewerPage() {
                 <button onClick={toggleListening}>
                   {isListening ? <MicOff /> : <Mic />}
                 </button>
+
                 <button
                   onClick={submitAnswer}
                   disabled={status === "analyzing"}

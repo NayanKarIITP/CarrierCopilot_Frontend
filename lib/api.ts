@@ -1,34 +1,31 @@
+
+
 // import axios from "axios";
 
 // /**
-//  * We MUST NOT access `window` at the top level in Next.js
-//  * because this file is imported during SSR.
+//  * Single source of truth for backend URL
+//  * Works in:
+//  * - Localhost
+//  * - Vercel
+//  * - SSR / CSR
 //  */
-// const getBaseURL = () => {
-//   if (typeof window === "undefined") {
-//     // Server-side (not really used for browser API calls)
-//     return "https://carriercopilot-nk.onrender.com/api";
-//   }
-
-//   // Client-side
-//   return window.location.hostname === "localhost"
-//     ? "http://localhost:5000/api"
-//     : "https://carriercopilot-nk.onrender.com/api";
-// };
+// const API_URL =
+//   process.env.NEXT_PUBLIC_API_URL ??
+//   "https://carriercopilot-nk.onrender.com/api";
 
 // const api = axios.create({
-//   baseURL: getBaseURL(),
+//   baseURL: API_URL,
+//   withCredentials: true,
 //   headers: {
 //     "Content-Type": "application/json",
 //   },
-//   withCredentials: true,
 // });
 
-// // ✅ Attach JWT token automatically
+// // Attach JWT automatically
 // api.interceptors.request.use((config) => {
 //   if (typeof window !== "undefined") {
 //     const token = localStorage.getItem("token");
-//     if (token && config.headers) {
+//     if (token) {
 //       config.headers.Authorization = `Bearer ${token}`;
 //     }
 //   }
@@ -37,7 +34,7 @@
 
 // export default api;
 
-// // -------------------- AUTH APIs --------------------
+// /* ---------- AUTH ---------- */
 
 // export const loginUser = async (email: string, password: string) => {
 //   const res = await api.post("/auth/login", { email, password });
@@ -75,6 +72,8 @@
 
 
 
+// src/lib/api.ts
+
 import axios from "axios";
 
 /**
@@ -90,22 +89,14 @@ const API_URL =
 
 const api = axios.create({
   baseURL: API_URL,
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  withCredentials: true, // ✅ cookie-based auth
 });
 
-// Attach JWT automatically
-api.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  }
-  return config;
-});
+/**
+ * ❌ DO NOT attach Authorization header manually
+ * ❌ DO NOT set global Content-Type
+ * Cookies handle auth automatically
+ */
 
 export default api;
 
