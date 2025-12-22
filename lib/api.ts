@@ -79,6 +79,7 @@ const api = axios.create({
   baseURL:
     process.env.NEXT_PUBLIC_API_URL ??
     "https://carriercopilot-nk.onrender.com/api",
+    withCredentials: true,
 });
 
 /* -------------------- TOKEN INTERCEPTOR -------------------- */

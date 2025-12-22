@@ -582,42 +582,81 @@ export default function ResumePage() {
   /* ---------------------------------------------------
      UPLOAD RESUME
   --------------------------------------------------- */
+  // async function uploadResume(file: File) {
+  //   const form = new FormData();
+  //   form.append("file", file);
+  //   form.append("targetRole", "fullstack-developer");
+
+  //   try {
+  //     const res = await api.post("/resume/upload", form);
+
+  //     if (!res.data?.success) {
+  //       throw new Error(res.data?.message || "Upload failed");
+  //     }
+
+  //     const parsed = res.data.data.parsedResume;
+
+  //     setScore(parsed.score || 0);
+  //     setParsedData({
+  //       skills: parsed.skills || [],
+  //       education: parsed.education || [],
+  //       experience: parsed.experience || [],
+  //       score: parsed.score || 0,
+  //       feedback: parsed.feedback || [],
+  //       strengths: parsed.strengths || [],
+  //       improvements: parsed.weaknesses || [],
+  //     });
+  //   } catch (err: any) {
+  //     if (err.response?.status === 401) {
+  //       localStorage.removeItem("token");
+  //       router.push("/login");
+  //     } else {
+  //       console.error("Upload error:", err);
+  //       setError(err.message || "Upload failed.");
+  //     }
+  //   } finally {
+  //     setUploading(false);
+  //   }
+  // }
+
   async function uploadResume(file: File) {
-    const form = new FormData();
-    form.append("file", file);
-    form.append("targetRole", "fullstack-developer");
+  const form = new FormData();
 
-    try {
-      const res = await api.post("/resume/upload", form);
+  // 🔥 MUST MATCH BACKEND EXACTLY
+  form.append("resume", file);                 // ✅ was "file"
+  form.append("target_role", "fullstack-developer"); // ✅ was "targetRole"
 
-      if (!res.data?.success) {
-        throw new Error(res.data?.message || "Upload failed");
-      }
+  try {
+    const res = await api.post("/resume/upload", form);
 
-      const parsed = res.data.data.parsedResume;
-
-      setScore(parsed.score || 0);
-      setParsedData({
-        skills: parsed.skills || [],
-        education: parsed.education || [],
-        experience: parsed.experience || [],
-        score: parsed.score || 0,
-        feedback: parsed.feedback || [],
-        strengths: parsed.strengths || [],
-        improvements: parsed.weaknesses || [],
-      });
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        localStorage.removeItem("token");
-        router.push("/login");
-      } else {
-        console.error("Upload error:", err);
-        setError(err.message || "Upload failed.");
-      }
-    } finally {
-      setUploading(false);
+    if (!res.data?.success) {
+      throw new Error(res.data?.message || "Upload failed");
     }
+
+    const parsed = res.data.data.parsedResume;
+
+    setScore(parsed.score || 0);
+    setParsedData({
+      skills: parsed.skills || [],
+      education: parsed.education || [],
+      experience: parsed.experience || [],
+      score: parsed.score || 0,
+      feedback: parsed.feedback || [],
+      strengths: parsed.strengths || [],
+      improvements: parsed.weaknesses || [],
+    });
+  } catch (err: any) {
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");
+      router.push("/login");
+    } else {
+      console.error("Upload error:", err);
+      setError(err.message || "Upload failed.");
+    }
+  } finally {
+    setUploading(false);
   }
+}
 
   /* ---------------------------------------------------
      UI
