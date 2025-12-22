@@ -70,21 +70,19 @@
 // };
 
 
-// src/lib/api.ts
+// lib/api.ts
 import axios from "axios";
 
-/**
- * Axios instance
- */
+/* -------------------- AXIOS INSTANCE -------------------- */
+
 const api = axios.create({
   baseURL:
     process.env.NEXT_PUBLIC_API_URL ??
     "https://carriercopilot-nk.onrender.com/api",
 });
 
-/**
- * Attach JWT from localStorage automatically
- */
+/* -------------------- TOKEN INTERCEPTOR -------------------- */
+
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("token");
@@ -95,9 +93,10 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+/* -------------------- DEFAULT EXPORT -------------------- */
 export default api;
 
-/* ================= AUTH APIs ================= */
+/* ==================== AUTH APIS ==================== */
 
 export const loginUser = async (email: string, password: string) => {
   const res = await api.post("/auth/login", { email, password });
