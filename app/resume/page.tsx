@@ -880,7 +880,6 @@
 
 
 
-
 "use client";
 
 import PDFViewer from "@/components/resume/pdf-viewer";
@@ -936,13 +935,9 @@ export default function ResumePage() {
           improvements: latest.weaknesses || [],
         });
 
-        // ✅ IMPORTANT: load PDF from backend
+        // ✅ USE BACKEND URL AS-IS (NO PREFIXING)
         if (latest.fileURL) {
-          const backendUrl =
-            process.env.NEXT_PUBLIC_API_URL ??
-            "https://carriercopilot-nk.onrender.com/api";
-
-          setPdfUrl(`${backendUrl}${latest.fileURL}`);
+          setPdfUrl(latest.fileURL);
         }
       }
     } catch (err: any) {
@@ -983,7 +978,7 @@ export default function ResumePage() {
   --------------------------------------------------- */
   async function uploadResume(file: File) {
     const formData = new FormData();
-    formData.append("resume", file);
+    formData.append("resume", file); // MUST MATCH BACKEND
 
     try {
       const res = await api.post("/resume/upload", formData);
@@ -1005,13 +1000,9 @@ export default function ResumePage() {
         improvements: parsedResume.weaknesses || [],
       });
 
-      // ✅ Use SERVER PDF URL (NOT createObjectURL)
+      // ✅ SERVER PDF URL ONLY
       if (resume.fileURL) {
-        const backendUrl =
-          process.env.NEXT_PUBLIC_API_URL ??
-          "https://carriercopilot-nk.onrender.com/api";
-
-        setPdfUrl(`${backendUrl}${resume.fileURL}`);
+        setPdfUrl(resume.fileURL);
       }
     } catch (err: any) {
       if (err.response?.status === 401) {
@@ -1019,7 +1010,7 @@ export default function ResumePage() {
         router.push("/login");
       } else {
         console.error("Upload error:", err);
-        setError("Resume upload failed.");
+        setError("Resume upload failed. Please try again.");
       }
     } finally {
       setUploading(false);
@@ -1041,6 +1032,7 @@ export default function ResumePage() {
             <h1 className="text-3xl font-bold">Resume Intelligence</h1>
           </div>
 
+          {/* Upload Box */}
           <label className="block cursor-pointer mb-6">
             <div className="border-2 border-dashed rounded-xl p-8 text-center">
               {uploading ? (
