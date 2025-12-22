@@ -42,14 +42,14 @@
 //       }
 
 //       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-      
+
 //       const res = await fetch(`${API_URL}/resume`, {
 //         headers: { Authorization: `Bearer ${token}` },
 //       });
 
 //       if (res.ok) {
 //         const responseData = await res.json();
-        
+
 //         if (responseData.success && responseData.data && responseData.data.length > 0) {
 //           const latest = responseData.data[0]; 
 //           console.log("🔄 Loaded saved resume:", latest);
@@ -133,7 +133,7 @@
 //       const parsed = data.parsedResume || data; 
 
 //       setScore(parsed.score || 0);
-      
+
 //       // ✅ SAFETY FIX
 //       setParsedData({
 //         skills: Array.isArray(parsed.skills) ? parsed.skills : [],
@@ -144,7 +144,7 @@
 //         strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
 //         improvements: Array.isArray(parsed.weaknesses) ? parsed.weaknesses : []
 //       });
-      
+
 //       if (data.pdf_url) {
 //         setPdfUrl(`http://localhost:5000${data.pdf_url}`);
 //       }
@@ -161,7 +161,7 @@
 //     <div className="bg-background text-foreground min-h-screen">
 //       <main className="md:ml-20 p-4 md:p-8">
 //         <div className="max-w-7xl mx-auto">
-          
+
 //           <div className="space-y-2 border-b border-border pb-6 mb-8">
 //             <h1 className="text-4xl font-bold tracking-tight text-foreground">
 //               Resume Intelligence
@@ -174,7 +174,7 @@
 //           <div className="mb-8">
 //             <label className={`cursor-pointer block relative group ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
 //               <div className="glass rounded-2xl border-2 border-dashed border-primary/30 p-8 text-center hover:border-primary/50 transition-colors">
-                
+
 //                 {uploading ? (
 //                    <div className="flex flex-col items-center">
 //                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mb-2" />
@@ -271,14 +271,14 @@
 //       }
 
 //       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-      
+
 //       const res = await fetch(`${API_URL}/resume`, {
 //         headers: { Authorization: `Bearer ${token}` },
 //       });
 
 //       if (res.ok) {
 //         const responseData = await res.json();
-        
+
 //         if (responseData.success && responseData.data && responseData.data.length > 0) {
 //           const latest = responseData.data[0]; 
 //           console.log("🔄 Loaded saved resume:", latest);
@@ -361,7 +361,7 @@
 //       const parsed = data.parsedResume || data; 
 
 //       setScore(parsed.score || 0);
-      
+
 //       setParsedData({
 //         skills: Array.isArray(parsed.skills) ? parsed.skills : [],
 //         education: Array.isArray(parsed.education) ? parsed.education : [],
@@ -371,7 +371,7 @@
 //         strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
 //         improvements: Array.isArray(parsed.weaknesses) ? parsed.weaknesses : []
 //       });
-      
+
 //       if (data.pdf_url) {
 //         setPdfUrl(`http://localhost:5000${data.pdf_url}`);
 //       }
@@ -390,7 +390,7 @@
 
 //       <main className="md:ml-20 transition-all duration-300">
 //         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          
+
 //           {/* === Header Section === */}
 //           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 pb-8 mb-8">
 //             <div className="space-y-2">
@@ -462,7 +462,7 @@
 //           {/* === Main Grid Layout === */}
 //           {(pdfUrl || loading) && (
 //             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              
+
 //               {/* Left Column: PDF Viewer (4 Cols) */}
 //               {/* Uses 'sticky' inside the PDFViewer component logic, or we can enforce it here */}
 //               <div className="lg:col-span-4 order-2 lg:order-1">
@@ -473,7 +473,7 @@
 //               <div className="lg:col-span-8 order-1 lg:order-2 space-y-6">
 //                 {/* Score Card */}
 //                 <ResumeScore score={score} loading={uploading || loading} />
-                
+
 //                 {/* Detailed Tabs */}
 //                 {/* Added min-height wrapper to prevent layout shift */}
 //                 <div className="min-h-[400px]">
@@ -673,6 +673,213 @@
 
 
 
+//Last working one
+// "use client";
+
+// import PDFViewer from "@/components/resume/pdf-viewer";
+// import ResumeScore from "@/components/resume/resume-score";
+// import FeedbackTabs from "@/components/resume/feedback-tabs";
+// import { Upload, AlertCircle, Sparkles, Loader2 } from "lucide-react";
+// import { useState, useEffect } from "react";
+// import api from "@/lib/api";
+// import { useRouter } from "next/navigation";
+
+// interface ParsedResume {
+//   skills?: string[];
+//   education?: any[];
+//   experience?: any[];
+//   score?: number;
+//   feedback?: string[];
+//   strengths?: string[];
+//   improvements?: string[];
+// }
+
+// export default function ResumePage() {
+//   const router = useRouter();
+
+//   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+//   const [score, setScore] = useState(0);
+//   const [parsedData, setParsedData] = useState<ParsedResume | null>(null);
+//   const [loading, setLoading] = useState(true);
+//   const [uploading, setUploading] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+
+//   /* ---------------------------------------------------
+//      LOAD LAST SAVED RESUME
+//   --------------------------------------------------- */
+//   useEffect(() => {
+//     fetchLatestResume();
+//   }, []);
+
+//   async function fetchLatestResume() {
+//     try {
+//       const res = await api.get("/resume");
+
+//       if (res.data?.success && res.data.data?.length > 0) {
+//         const latest = res.data.data[0];
+
+//         setScore(latest.score || 0);
+//         setParsedData({
+//           skills: latest.skills || [],
+//           education: latest.education || [],
+//           experience: latest.experience || [],
+//           score: latest.score || 0,
+//           feedback: latest.feedback || [],
+//           strengths: latest.strengths || [],
+//           improvements: latest.weaknesses || [],
+//         });
+//       }
+//     } catch (err: any) {
+//       if (err.response?.status === 401) {
+//         localStorage.removeItem("token");
+//         router.push("/login");
+//       } else {
+//         console.error("Failed to load resume:", err);
+//         setError("Could not load previous resume data.");
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   }
+
+//   /* ---------------------------------------------------
+//      FILE SELECT
+//   --------------------------------------------------- */
+//   async function handleFileSelect(
+//     e: React.ChangeEvent<HTMLInputElement>
+//   ) {
+//     const file = e.target.files?.[0];
+//     if (!file) return;
+
+//     if (file.type !== "application/pdf") {
+//       alert("Please upload a valid PDF file.");
+//       return;
+//     }
+
+//     setPdfUrl(URL.createObjectURL(file));
+//     setUploading(true);
+//     setError(null);
+
+//     await uploadResume(file);
+//   }
+
+//   /* ---------------------------------------------------
+//      UPLOAD RESUME (PRODUCTION SAFE)
+//   --------------------------------------------------- */
+//   async function uploadResume(file: File) {
+//     const formData = new FormData();
+
+//     // ✅ MUST MATCH BACKEND
+//     formData.append("resume", file);
+//     formData.append("target_role", "fullstack-developer");
+
+//     try {
+//       const res = await api.post("/resume/upload", formData);
+//       // 🚫 DO NOT SET CONTENT-TYPE HEADER
+
+//       if (!res.data?.success) {
+//         throw new Error(res.data?.message || "Upload failed");
+//       }
+
+//       const parsed = res.data.data.parsedResume;
+
+//       setScore(parsed.score || 0);
+//       setParsedData({
+//         skills: parsed.skills || [],
+//         education: parsed.education || [],
+//         experience: parsed.experience || [],
+//         score: parsed.score || 0,
+//         feedback: parsed.feedback || [],
+//         strengths: parsed.strengths || [],
+//         improvements: parsed.weaknesses || [],
+//       });
+//     } catch (err: any) {
+//       if (err.response?.status === 401) {
+//         localStorage.removeItem("token");
+//         router.push("/login");
+//       } else {
+//         console.error("Upload error:", err);
+//         setError("Resume upload failed. Please try again.");
+//       }
+//     } finally {
+//       setUploading(false);
+//     }
+//   }
+
+//   /* ---------------------------------------------------
+//      UI
+//   --------------------------------------------------- */
+//   return (
+//     <div className="bg-gray-50 dark:bg-background min-h-screen">
+//       <main className="md:ml-20">
+//         <div className="max-w-7xl mx-auto px-6 py-10">
+
+//           <div className="mb-8">
+//             <div className="flex items-center gap-2 text-indigo-600">
+//               <Sparkles size={14} /> AI Powered
+//             </div>
+//             <h1 className="text-3xl font-bold">Resume Intelligence</h1>
+//           </div>
+
+//           <label className="block cursor-pointer mb-6">
+//             <div className="border-2 border-dashed rounded-xl p-8 text-center">
+//               {uploading ? (
+//                 <Loader2 className="animate-spin mx-auto" />
+//               ) : (
+//                 <Upload className="mx-auto" />
+//               )}
+//               <p className="mt-2 text-sm text-muted-foreground">
+//                 Upload your resume (PDF)
+//               </p>
+//             </div>
+//             <input
+//               type="file"
+//               hidden
+//               accept=".pdf"
+//               onChange={handleFileSelect}
+//             />
+//           </label>
+
+//           {error && (
+//             <div className="bg-red-100 text-red-600 p-3 rounded-lg flex gap-2">
+//               <AlertCircle size={18} /> {error}
+//             </div>
+//           )}
+
+//           {/* pdfUrl */}
+//           {(parsedData || loading) && (
+//             <div className="grid lg:grid-cols-12 gap-6 mt-8">
+//               <div className="lg:col-span-4">
+//                 {pdfUrl ? (
+//                   <PDFViewer fileUrl={pdfUrl} />
+//                 ) : (
+//                   <div className="flex items-center justify-center h-full text-gray-400">
+//                     PDF preview available before upload
+//                   </div>
+//                 )}
+
+//               </div>
+//               <div className="lg:col-span-8 space-y-6">
+//                 <ResumeScore
+//                   score={score}
+//                   loading={uploading || loading}
+//                 />
+//                 <FeedbackTabs
+//                   parsedData={parsedData}
+//                   loading={uploading || loading}
+//                 />
+//               </div>
+//             </div>
+//           )}
+//         </div>
+//       </main>
+//     </div>
+//   );
+// }
+
+
+
+
 
 "use client";
 
@@ -705,7 +912,7 @@ export default function ResumePage() {
   const [error, setError] = useState<string | null>(null);
 
   /* ---------------------------------------------------
-     LOAD LAST SAVED RESUME
+     LOAD LAST RESUME (ON REFRESH / NAVIGATION)
   --------------------------------------------------- */
   useEffect(() => {
     fetchLatestResume();
@@ -728,6 +935,15 @@ export default function ResumePage() {
           strengths: latest.strengths || [],
           improvements: latest.weaknesses || [],
         });
+
+        // ✅ IMPORTANT: load PDF from backend
+        if (latest.fileURL) {
+          const backendUrl =
+            process.env.NEXT_PUBLIC_API_URL ??
+            "https://carriercopilot-nk.onrender.com/api";
+
+          setPdfUrl(`${backendUrl}${latest.fileURL}`);
+        }
       }
     } catch (err: any) {
       if (err.response?.status === 401) {
@@ -735,7 +951,7 @@ export default function ResumePage() {
         router.push("/login");
       } else {
         console.error("Failed to load resume:", err);
-        setError("Could not load previous resume data.");
+        setError("Could not load resume data.");
       }
     } finally {
       setLoading(false);
@@ -756,7 +972,6 @@ export default function ResumePage() {
       return;
     }
 
-    setPdfUrl(URL.createObjectURL(file));
     setUploading(true);
     setError(null);
 
@@ -764,42 +979,47 @@ export default function ResumePage() {
   }
 
   /* ---------------------------------------------------
-     UPLOAD RESUME (PRODUCTION SAFE)
+     UPLOAD RESUME
   --------------------------------------------------- */
   async function uploadResume(file: File) {
     const formData = new FormData();
-
-    // ✅ MUST MATCH BACKEND
     formData.append("resume", file);
-    formData.append("target_role", "fullstack-developer");
 
     try {
       const res = await api.post("/resume/upload", formData);
-      // 🚫 DO NOT SET CONTENT-TYPE HEADER
 
       if (!res.data?.success) {
-        throw new Error(res.data?.message || "Upload failed");
+        throw new Error("Upload failed");
       }
 
-      const parsed = res.data.data.parsedResume;
+      const { resume, parsedResume } = res.data.data;
 
-      setScore(parsed.score || 0);
+      setScore(parsedResume.score || 0);
       setParsedData({
-        skills: parsed.skills || [],
-        education: parsed.education || [],
-        experience: parsed.experience || [],
-        score: parsed.score || 0,
-        feedback: parsed.feedback || [],
-        strengths: parsed.strengths || [],
-        improvements: parsed.weaknesses || [],
+        skills: parsedResume.skills || [],
+        education: parsedResume.education || [],
+        experience: parsedResume.experience || [],
+        score: parsedResume.score || 0,
+        feedback: parsedResume.feedback || [],
+        strengths: parsedResume.strengths || [],
+        improvements: parsedResume.weaknesses || [],
       });
+
+      // ✅ Use SERVER PDF URL (NOT createObjectURL)
+      if (resume.fileURL) {
+        const backendUrl =
+          process.env.NEXT_PUBLIC_API_URL ??
+          "https://carriercopilot-nk.onrender.com/api";
+
+        setPdfUrl(`${backendUrl}${resume.fileURL}`);
+      }
     } catch (err: any) {
       if (err.response?.status === 401) {
         localStorage.removeItem("token");
         router.push("/login");
       } else {
         console.error("Upload error:", err);
-        setError("Resume upload failed. Please try again.");
+        setError("Resume upload failed.");
       }
     } finally {
       setUploading(false);
@@ -846,11 +1066,18 @@ export default function ResumePage() {
             </div>
           )}
 
-          {(pdfUrl || loading) && (
+          {(parsedData || loading) && (
             <div className="grid lg:grid-cols-12 gap-6 mt-8">
               <div className="lg:col-span-4">
-                <PDFViewer fileUrl={pdfUrl} />
+                {pdfUrl ? (
+                  <PDFViewer fileUrl={pdfUrl} />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-400">
+                    No resume uploaded yet
+                  </div>
+                )}
               </div>
+
               <div className="lg:col-span-8 space-y-6">
                 <ResumeScore
                   score={score}
