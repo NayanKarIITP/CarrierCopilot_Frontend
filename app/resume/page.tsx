@@ -674,7 +674,6 @@
 
 
 
-
 "use client";
 
 import PDFViewer from "@/components/resume/pdf-viewer";
@@ -685,8 +684,6 @@ import { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 
-/* ---------------- TYPES ---------------- */
-
 interface ParsedResume {
   skills?: string[];
   education?: any[];
@@ -696,8 +693,6 @@ interface ParsedResume {
   strengths?: string[];
   improvements?: string[];
 }
-
-/* ================= PAGE ================= */
 
 export default function ResumePage() {
   const router = useRouter();
@@ -750,7 +745,9 @@ export default function ResumePage() {
   /* ---------------------------------------------------
      FILE SELECT
   --------------------------------------------------- */
-  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileSelect(
+    e: React.ChangeEvent<HTMLInputElement>
+  ) {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -767,22 +764,18 @@ export default function ResumePage() {
   }
 
   /* ---------------------------------------------------
-     UPLOAD RESUME (🔥 PRODUCTION SAFE 🔥)
+     UPLOAD RESUME (PRODUCTION SAFE)
   --------------------------------------------------- */
   async function uploadResume(file: File) {
-    const form = new FormData();
+    const formData = new FormData();
 
-    // 🔥 MUST MATCH BACKEND EXACTLY
-    form.append("resume", file);
-    form.append("target_role", "fullstack-developer");
+    // ✅ MUST MATCH BACKEND
+    formData.append("resume", file);
+    formData.append("target_role", "fullstack-developer");
 
     try {
-      const res = await api.post("/resume/upload", form, {
-        headers: {
-          // 🔥 REQUIRED FOR NEXT.JS PRODUCTION
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await api.post("/resume/upload", formData);
+      // 🚫 DO NOT SET CONTENT-TYPE HEADER
 
       if (!res.data?.success) {
         throw new Error(res.data?.message || "Upload failed");
@@ -821,7 +814,6 @@ export default function ResumePage() {
       <main className="md:ml-20">
         <div className="max-w-7xl mx-auto px-6 py-10">
 
-          {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-2 text-indigo-600">
               <Sparkles size={14} /> AI Powered
@@ -829,9 +821,8 @@ export default function ResumePage() {
             <h1 className="text-3xl font-bold">Resume Intelligence</h1>
           </div>
 
-          {/* Upload Box */}
           <label className="block cursor-pointer mb-6">
-            <div className="border-2 border-dashed rounded-xl p-8 text-center hover:border-indigo-400 transition">
+            <div className="border-2 border-dashed rounded-xl p-8 text-center">
               {uploading ? (
                 <Loader2 className="animate-spin mx-auto" />
               ) : (
@@ -849,21 +840,22 @@ export default function ResumePage() {
             />
           </label>
 
-          {/* Error */}
           {error && (
-            <div className="bg-red-100 text-red-600 p-3 rounded-lg flex gap-2 mb-6">
+            <div className="bg-red-100 text-red-600 p-3 rounded-lg flex gap-2">
               <AlertCircle size={18} /> {error}
             </div>
           )}
 
-          {/* Result */}
           {(pdfUrl || loading) && (
             <div className="grid lg:grid-cols-12 gap-6 mt-8">
               <div className="lg:col-span-4">
                 <PDFViewer fileUrl={pdfUrl} />
               </div>
               <div className="lg:col-span-8 space-y-6">
-                <ResumeScore score={score} loading={uploading || loading} />
+                <ResumeScore
+                  score={score}
+                  loading={uploading || loading}
+                />
                 <FeedbackTabs
                   parsedData={parsedData}
                   loading={uploading || loading}
