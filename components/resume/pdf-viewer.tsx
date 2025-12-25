@@ -149,7 +149,10 @@ export default function PDFViewer({ fileUrl }: PDFViewerProps) {
   }
 
   // ✅ BACKEND ALREADY SENDS FULL URL — USE AS IS
-  const pdfUrl = fileUrl;
+  // const pdfUrl = fileUrl;
+  const pdfUrl = fileUrl
+  ? fileUrl.replace("http://", "https://")
+  : "";
 
   return (
     <div className="bg-gray-900 rounded-2xl border overflow-hidden shadow-xl h-[520px] lg:h-[calc(100vh-140px)] flex flex-col">
