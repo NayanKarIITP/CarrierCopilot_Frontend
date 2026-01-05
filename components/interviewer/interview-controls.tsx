@@ -286,7 +286,7 @@ export default function InterviewControls({
       setLoading(true);
       const token = localStorage.getItem("token");
       
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
       const res = await fetch(`${API_URL}/interview/next-question`, {
         method: "POST",
