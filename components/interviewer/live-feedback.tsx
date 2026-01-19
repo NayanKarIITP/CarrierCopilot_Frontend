@@ -328,7 +328,6 @@
 
 
 
-
 "use client";
 
 import { LineChart, Line, YAxis, ResponsiveContainer } from "recharts";
@@ -344,23 +343,31 @@ export default function LiveFeedback({ metrics, latestTranscriptAnalysis }: Live
   const [dataHistory, setDataHistory] = useState<any[]>([]);
 
   useEffect(() => {
-    if (metrics?.visual_confidence) {
+    // 🛠️ FIX 1: Check for 'confidence_score' (matches your Python backend)
+    // 🛠️ FIX 2: Check for undefined specifically, so '0' is still counted as valid data
+    const score = metrics?.confidence_score ?? metrics?.visual_confidence;
+
+    if (score !== undefined && score !== null) {
       setDataHistory(prev => {
-        const newData = [...prev, { time: '', val: metrics.visual_confidence }];
-        return newData.slice(-20); 
+        const newData = [...prev, { time: '', val: score }];
+        // Keep last 30 points for a smoother line
+        return newData.slice(-30); 
       });
     }
   }, [metrics]);
 
   const emotion = metrics?.emotion || "Neutral";
-  const confidence = metrics?.visual_confidence || 0;
+  // 🛠️ FIX 3: Map the correct key here too
+  const confidence = metrics?.confidence_score ?? metrics?.visual_confidence ?? 0;
   const eyeContact = metrics?.eye_contact || 0;
   
   const getEmotionColor = (e: string) => {
-      switch(e.toLowerCase()) {
+      switch(e?.toLowerCase()) { // Safe check for e
           case 'happy': return 'text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20';
           case 'stressed': return 'text-red-500 bg-red-50 dark:bg-red-900/20';
+          case 'focused': return 'text-blue-500 bg-blue-50 dark:bg-blue-900/20'; // Added Focused
           case 'concentrated': return 'text-blue-500 bg-blue-50 dark:bg-blue-900/20';
+          case 'surprised': return 'text-amber-500 bg-amber-50 dark:bg-amber-900/20';
           default: return 'text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-muted';
       }
   };
@@ -398,7 +405,7 @@ export default function LiveFeedback({ metrics, latestTranscriptAnalysis }: Live
             
             {latestTranscriptAnalysis && (
                 <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 animate-in fade-in">
-                     <ProgressBar 
+                      <ProgressBar 
                         label="Answer Relevance" 
                         value={latestTranscriptAnalysis.relevance_score || 0} 
                         color="bg-purple-500" 
