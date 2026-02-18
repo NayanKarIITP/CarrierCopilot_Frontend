@@ -38,7 +38,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-2">AI Career Copilot</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Career Copilot</h1>
           <p className="text-muted-foreground">Welcome back</p>
         </div>
 
@@ -88,17 +88,17 @@ export default function LoginPage() {
           </form>
 
           {/* Divider */}
-          <div className="relative my-6">
+          {/* <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-border"></div>
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-card text-muted-foreground">Or continue with</span>
             </div>
-          </div>
+          </div> */}
 
           {/* Google Button */}
-          <button
+          {/* <button
             type="button"
             onClick={handleGoogleLogin}
             className="w-full py-2 rounded-lg bg-card hover:bg-muted border border-border text-foreground font-medium transition-colors flex items-center justify-center gap-2"
@@ -122,7 +122,7 @@ export default function LoginPage() {
               />
             </svg>
             Continue with Google
-          </button>
+          </button> */}
         </div>
 
         {/* Footer */}

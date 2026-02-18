@@ -6,12 +6,12 @@ import VideoFeed from "@/components/interviewer/video-feed";
 import QuestionDisplay from "@/components/interviewer/question-display";
 import LiveFeedback from "@/components/interviewer/live-feedback";
 import {
-  Loader2, Mic, MicOff, Send,
+  Hourglass, Mic, MicOff, Send,
   BarChart3, Volume2, VolumeX, Video, Activity, X,
   Settings2, Play, Sparkles, User, Briefcase
 } from "lucide-react";
 
-// --- Types & Interfaces ---
+// Types & Interfaces
 interface Question {
   id: string;
   text: string;
@@ -58,7 +58,7 @@ export default function InterviewerPage() {
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
 
-  // --- SPEECH & AUDIO LOGIC ---
+  // SPEECH & AUDIO LOGIC 
   useEffect(() => {
     if (typeof window !== "undefined" && (window.SpeechRecognition || window.webkitSpeechRecognition)) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -105,7 +105,7 @@ export default function InterviewerPage() {
     }
   }, [currentQuestion, interviewStage, status, ttsEnabled]);
 
-  // --- API ACTIONS ---
+  // API ACTIONS
   const startSession = async () => {
     if (!config.role) return alert("Please enter a target role.");
     setLoading(true);
@@ -213,7 +213,7 @@ export default function InterviewerPage() {
   return (
     <div className="bg-gray-50 dark:bg-background text-gray-900 dark:text-foreground min-h-screen flex flex-col font-sans overflow-hidden transition-colors">
 
-      {/* --- HEADER --- */}
+      {/* HEADER */}
       <header className="bg-white dark:bg-card px-4 py-3 border-b border-gray-200 dark:border-border flex justify-between items-center z-30 shadow-sm shrink-0 h-16">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-indigo-600 rounded-lg text-white shadow-indigo-200 dark:shadow-none shadow-lg">
@@ -241,11 +241,11 @@ export default function InterviewerPage() {
         )}
       </header>
 
-      {/* --- MAIN CONTENT AREA --- */}
+      {/* MAIN CONTENT AREA */}
       <main className="flex-1 relative overflow-hidden flex flex-col lg:flex-row h-[calc(100vh-64px)] lg:h-auto">
 
         {/* LEFT PANEL: Video & Setup/Interaction */}
-        {/* ✅ UPDATE: Improved Flex layout for Desktop Lobby */}
+        {/* UPDATE: Improved Flex layout for Desktop Lobby */}
         <div className={`flex-1 flex flex-col h-full overflow-y-auto p-4 md:p-6 transition-all duration-300 ${mobileTab === 'interview' ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full absolute inset-0 -z-10 lg:opacity-100 lg:static lg:translate-x-0 lg:z-auto'}`}>
           
           <div className={`w-full flex flex-col ${status === 'setup' ? 'lg:flex-row lg:items-center lg:justify-center lg:h-full lg:gap-12 lg:max-w-7xl lg:mx-auto' : 'gap-6'}`}>
@@ -264,7 +264,7 @@ export default function InterviewerPage() {
               </div>
             </div>
 
-            {/* ✅ 2. SESSION SETUP - Desktop: Side Panel, Mobile: Below Video */}
+            {/* 2. SESSION SETUP - Desktop: Side Panel, Mobile: Below Video */}
             {status === 'setup' && (
               <div className="w-full lg:flex-1 max-w-lg mx-auto bg-white dark:bg-card rounded-2xl shadow-lg border border-gray-200 dark:border-border p-6 md:p-8 animate-in slide-in-from-bottom-4 duration-500">
                   <div className="space-y-2 mb-6">
@@ -313,7 +313,7 @@ export default function InterviewerPage() {
                           disabled={loading}
                           className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white py-4 rounded-xl font-bold text-sm flex justify-center items-center gap-2 shadow-lg shadow-indigo-200 dark:shadow-none transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                          {loading ? <Loader2 className="animate-spin" size={18} /> : <Play size={18} fill="currentColor" />}
+                          {loading ? <Hourglass className="animate-spin" size={18} /> : <Play size={18} fill="currentColor" />}
                           Start Interview Session
                         </button>
                         <p className="text-xs text-center text-gray-400 mt-3">Microphone access required.</p>
@@ -348,7 +348,7 @@ export default function InterviewerPage() {
                       {isListening && <span className="text-xs font-bold text-red-500 animate-pulse hidden sm:block">Listening...</span>}
                     </div>
                     <button onClick={submitAnswer} disabled={status === 'analyzing' || !transcript} className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm font-bold flex items-center gap-2 shadow-md shadow-indigo-200 dark:shadow-none transition-all active:scale-95">
-                      {status === 'analyzing' ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
+                      {status === 'analyzing' ? <Hourglass className="animate-spin" size={18} /> : <Send size={18} />}
                       <span className="hidden sm:inline">Submit Answer</span>
                     </button>
                   </div>
@@ -388,7 +388,7 @@ export default function InterviewerPage() {
 
       </main>
 
-      {/* --- MOBILE BOTTOM TAB BAR --- */}
+      {/* MOBILE BOTTOM TAB BAR */}
       {status !== 'setup' && (
         <div className="lg:hidden bg-white dark:bg-card border-t border-gray-200 dark:border-border flex justify-around py-3 px-4 shrink-0 z-40 pb-safe">
           <button onClick={() => setMobileTab('interview')} className={`flex flex-col items-center gap-1.5 p-2 rounded-xl w-full transition-all duration-300 ${mobileTab === 'interview' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-muted/10'}`}>
@@ -406,289 +406,3 @@ export default function InterviewerPage() {
     </div>
   );
 }
-
-
-
-
-
-// "use client";
-
-// import { useState, useEffect, useRef } from "react";
-// import { useRouter } from "next/navigation";
-// import api from "@/lib/api";
-
-// import VideoFeed from "@/components/interviewer/video-feed";
-// import QuestionDisplay from "@/components/interviewer/question-display";
-// import LiveFeedback from "@/components/interviewer/live-feedback";
-
-// import {
-//   Loader2,
-//   Mic,
-//   MicOff,
-//   BarChart3,
-// } from "lucide-react";
-
-// // ---------------- TYPES ----------------
-// interface Question {
-//   id: string;
-//   text: string;
-//   follow_up?: string;
-// }
-
-// interface AnalysisData {
-//   strengths: string[];
-//   improvements: string[];
-//   clarity_score: number;
-// }
-
-// declare global {
-//   interface Window {
-//     SpeechRecognition: any;
-//     webkitSpeechRecognition: any;
-//   }
-// }
-
-// const MAX_QUESTIONS = 3;
-
-// // ---------------- COMPONENT ----------------
-// export default function InterviewerPage() {
-//   const router = useRouter();
-
-//   const [config, setConfig] = useState({
-//     sessionId: null as string | null,
-//     role: "Software Engineer",
-//     level: "Mid-Level",
-//   });
-
-//   const [status, setStatus] =
-//     useState<"setup" | "active" | "analyzing" | "completed">("setup");
-
-//   const [questionCount, setQuestionCount] = useState(0);
-//   const [currentQuestion, setCurrentQuestion] = useState<Question>({
-//     id: "0",
-//     text: "",
-//   });
-
-//   const [interviewStage, setInterviewStage] =
-//     useState<"main" | "followup">("main");
-
-//   const [loading, setLoading] = useState(false);
-//   const [videoMetrics, setVideoMetrics] = useState<any>(null);
-//   const [transcriptAnalysis, setTranscriptAnalysis] =
-//     useState<AnalysisData | null>(null);
-//   const [transcript, setTranscript] = useState("");
-
-//   const [isListening, setIsListening] = useState(false);
-//   const recognitionRef = useRef<any>(null);
-
-//   // ---------------- SPEECH RECOGNITION ----------------
-//   useEffect(() => {
-//     if (
-//       typeof window !== "undefined" &&
-//       (window.SpeechRecognition || window.webkitSpeechRecognition)
-//     ) {
-//       const SpeechRecognition =
-//         window.SpeechRecognition || window.webkitSpeechRecognition;
-//       const recognition = new SpeechRecognition();
-
-//       recognition.continuous = true;
-//       recognition.interimResults = true;
-//       recognition.lang = "en-US";
-
-//       recognition.onresult = (event: any) => {
-//         let finalText = "";
-//         for (let i = event.resultIndex; i < event.results.length; i++) {
-//           if (event.results[i].isFinal) {
-//             finalText += event.results[i][0].transcript + " ";
-//           }
-//         }
-//         if (finalText) setTranscript((prev) => prev + finalText);
-//       };
-
-//       recognition.onerror = () => setIsListening(false);
-//       recognitionRef.current = recognition;
-//     }
-//   }, []);
-
-//   const stopListeningSafe = () => {
-//     try {
-//       recognitionRef.current?.stop();
-//     } catch {}
-//     setIsListening(false);
-//   };
-
-//   const toggleListening = () => {
-//     if (!recognitionRef.current) {
-//       alert("Speech recognition not supported.");
-//       return;
-//     }
-//     if (isListening) {
-//       stopListeningSafe();
-//     } else {
-//       recognitionRef.current.start();
-//       setIsListening(true);
-//     }
-//   };
-
-//   // ---------------- API ACTIONS ----------------
-//   const startSession = async () => {
-//     setLoading(true);
-//     try {
-//       const res = await api.post("/interview/start", {
-//         role: config.role,
-//         level: config.level,
-//       });
-
-//       if (res.data?.success) {
-//         setConfig((p) => ({ ...p, sessionId: res.data.sessionId }));
-//         setCurrentQuestion({
-//           id: res.data.question._id,
-//           text: res.data.question.text,
-//           follow_up: res.data.question.follow_up,
-//         });
-//         setQuestionCount(1);
-//         setStatus("active");
-//       }
-//     } catch {
-//       alert("Failed to start interview.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const submitAnswer = async () => {
-//     if (!transcript.trim() || !config.sessionId) return;
-
-//     stopListeningSafe();
-//     setStatus("analyzing");
-
-//     try {
-//       const res = await api.post("/interview/analyze", {
-//         transcript,
-//         question: currentQuestion.text,
-//         sessionId: config.sessionId,
-//       });
-
-//       if (res.data?.success) {
-//         setTranscriptAnalysis(res.data.data.analysis);
-//         setTimeout(handleStageTransition, 4000);
-//       }
-//     } catch {
-//       setStatus("active");
-//     }
-//   };
-
-//   const handleStageTransition = () => {
-//     if (interviewStage === "main" && currentQuestion.follow_up) {
-//       setInterviewStage("followup");
-//       setTranscript("");
-//       setTranscriptAnalysis(null);
-//       setStatus("active");
-//     } else {
-//       fetchNextQuestion();
-//     }
-//   };
-
-//   const fetchNextQuestion = async () => {
-//     if (!config.sessionId || questionCount >= MAX_QUESTIONS) {
-//       router.push(`/performance?session=${config.sessionId}`);
-//       return;
-//     }
-
-//     setLoading(true);
-//     setTranscript("");
-//     setTranscriptAnalysis(null);
-
-//     try {
-//       const res = await api.post("/interview/next-question", {
-//         sessionId: config.sessionId,
-//         role: config.role,
-//         level: config.level,
-//       });
-
-//       if (res.data?.success) {
-//         setCurrentQuestion({
-//           id: res.data.question._id,
-//           text: res.data.question.text,
-//           follow_up: res.data.question.follow_up,
-//         });
-//         setQuestionCount((p) => p + 1);
-//         setInterviewStage("main");
-//         setStatus("active");
-//       }
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   // ---------------- UI ----------------
-//   return (
-//     <div className="min-h-screen bg-gray-50 dark:bg-background">
-//       <header className="h-16 flex items-center px-4 border-b bg-white dark:bg-card">
-//         <BarChart3 className="text-indigo-600 mr-2" />
-//         <h1 className="font-bold">AI Interview</h1>
-//       </header>
-
-//       <main className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-//         <div className="lg:col-span-2 space-y-4">
-//           <VideoFeed
-//             isStreaming={status !== "completed"}
-//             onMetrics={setVideoMetrics}
-//           />
-
-//           {status === "setup" && (
-//             <button
-//               onClick={startSession}
-//               disabled={loading}
-//               className="w-full bg-indigo-600 text-white py-3 rounded-lg"
-//             >
-//               {loading ? "Starting..." : "Start Interview"}
-//             </button>
-//           )}
-
-//           {(status === "active" || status === "analyzing") && (
-//             <>
-//               <QuestionDisplay
-//                 question={
-//                   interviewStage === "main"
-//                     ? currentQuestion.text
-//                     : currentQuestion.follow_up || ""
-//                 }
-//                 loading={loading}
-//                 stage={interviewStage}
-//               />
-
-//               <textarea
-//                 className="w-full p-4 border rounded-lg"
-//                 placeholder="Type or speak your answer..."
-//                 value={transcript}
-//                 onChange={(e) => setTranscript(e.target.value)}
-//               />
-
-//               <div className="flex gap-2">
-//                 <button onClick={toggleListening}>
-//                   {isListening ? <MicOff /> : <Mic />}
-//                 </button>
-
-//                 <button
-//                   onClick={submitAnswer}
-//                   disabled={status === "analyzing"}
-//                   className="bg-indigo-600 text-white px-4 py-2 rounded"
-//                 >
-//                   {status === "analyzing" ? "Analyzing..." : "Submit"}
-//                 </button>
-//               </div>
-//             </>
-//           )}
-//         </div>
-
-//         <div>
-//           <LiveFeedback
-//             metrics={videoMetrics}
-//             latestTranscriptAnalysis={transcriptAnalysis}
-//           />
-//         </div>
-//       </main>
-//     </div>
-//   );
-// }
