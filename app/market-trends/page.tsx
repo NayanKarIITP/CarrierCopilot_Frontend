@@ -30,7 +30,7 @@ export default function MarketTrends() {
       try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-      const response = await fetch(`${API_URL}/api/trends`);
+      const response = await fetch(`${API_URL}/trends`);
       const result = await response.json();
         
         if (result.success && result.data) {
