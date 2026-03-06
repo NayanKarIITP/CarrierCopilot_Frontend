@@ -28,8 +28,10 @@ export default function MarketTrends() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/trends")
-        const result = await response.json()
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+      const response = await fetch(`${API_URL}/api/trends`);
+      const result = await response.json();
         
         if (result.success && result.data) {
           setData(result.data)
